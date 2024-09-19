@@ -1,5 +1,5 @@
 import React from 'react'
-import Product from '../../ShopWeb/product/Product'
+import Product from '../../ShopWeb/product/product'
 import Header from '../../ShopWeb/header/Header'
 import Footer from '../../ShopWeb/footer/Footer'
 import ProductSlider from "../../ShopWeb/slider/ProductSlider";

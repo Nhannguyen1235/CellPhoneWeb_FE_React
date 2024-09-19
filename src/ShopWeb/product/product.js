@@ -5,7 +5,7 @@ import { fetchProducts } from "../redux/productSlice";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import "./Product.css";
+import "./product.css";
 import { addCart } from "../redux/cartSlice";
 import Swal from "sweetalert2";
 
