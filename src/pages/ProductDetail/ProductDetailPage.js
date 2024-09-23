@@ -15,7 +15,6 @@ export default function ProductDetail() {
           <h1>Best Seller</h1>
         <ProductSlider/>
         </section>
-        
         <Footer/>
     </div>
   )

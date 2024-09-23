@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import brand1 from '../../imgs/1.png';
-import brand2 from '../../imgs/2.png';
-import brand3 from '../../imgs/3.png';
-import brand4 from '../../imgs/4.png';
-import brand5 from '../../imgs/5.png';
+import brand1 from '../../imgs/logo_apple.png';
+import brand2 from '../../imgs/logo_huawei.jpg';
+import brand3 from '../../imgs/logo_samsung.jpg';
+import brand4 from '../../imgs/logo_xiaomi.jpg';
+import brand5 from '../../imgs/logo_oppo.png';
 import './BrandSlider.css';
 
 export default function BrandSlider() {

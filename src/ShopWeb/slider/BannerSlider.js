@@ -5,9 +5,9 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import { nextSlide, prevSlide, setSlide } from '../redux/sliderSlice';
-import img_slider from '../../imgs/gscd1.jpg';
-import img_slider2 from '../../imgs/maxresdefault.jpg';
-import img_slider3 from '../../imgs/banner-fashion_113854663.jpg';
+import img_slider from '../../imgs/phono-slider-1.webp';
+import img_slider2 from '../../imgs/phono-slider-2.webp';
+import img_slider3 from '../../imgs/phono-slider-3.webp';
 import img_slider4 from '../../imgs/1931319.jpg';
 import './Slider.css';
 
@@ -52,9 +52,9 @@ export default function Slider() {
                 <div className="item">
                   <img src={img} alt={`event-${index}`} />
                   <div className={`content ${currentSlide === index ? 'runleft' : ''}`}>
-                    <h1 className="title">aaaâ</h1>
-                    <p className="description">aaaâ</p>
-                    <button href="" className='btn btn-outline-dark'>Read More</button>
+                    <h1 className="title">OnePlus 11 5G</h1>
+                    <p className="description">OnePlus 11 5G is a high-end smartphone with a 6.7-inch AMOLED display, Qualcomm Snapdragon 8 Gen 2 processor, 12GB of RAM, and 256GB of storage.It has a 50MP main camera, 16MP ultrawide camera, and 2MP macro camera. It also has a 5000mAh battery with 80W fast charging and 50W wireless charging.</p>
+                    <button href="" className='btn btn-secondary btn-outline-dark'>Read More</button>
                   </div>
                 </div>
               </SwiperSlide>

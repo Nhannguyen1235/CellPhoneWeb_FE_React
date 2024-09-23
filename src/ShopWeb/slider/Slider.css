@@ -9,6 +9,14 @@
     height: 100%;
   }
   
+  .events-slider .description {
+    text-align: justify;
+    max-width: 500px;
+    line-height: 1.5;
+    color: #fff;
+  }
+
+  
   .item {
     position: relative;
     display: flex;
@@ -46,8 +54,8 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #FFF5;
-    color: #FFFFFF;
+    background-color: #847e7e55;
+    color: #e20b0b;
     border: none;
     font-family: monospace;
     font-weight: bold;
@@ -101,6 +109,7 @@
       left: -40%;
     }
     .item img {
-      object-fit: contain;
+      object-fit: inherit;
+
     }
   }

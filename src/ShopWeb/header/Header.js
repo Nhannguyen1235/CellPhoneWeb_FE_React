@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 import "./Header.css";
 import { BsCart, BsSearch } from "react-icons/bs";
+import { CiUser } from "react-icons/ci";
 import logo from "../../imgs/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { overwriteCarts } from "../redux/cartSlice";
@@ -40,11 +41,14 @@ export default function Header() {
     // Điều hướng đến trang tìm kiếm với từ khóa tìm kiếm
     navigate(`/products/search/${text}`);
   };
- 
+
   return (
     <header className="custom-header container">
       <div>
-        <Navbar className="navbar fixed-top sticky navbar-expand-md navbar-dark" color="faded">
+        <Navbar
+          className="navbar fixed-top sticky navbar-expand-md navbar-light"
+          color="white"
+        >
           <NavbarBrand href="/" className="me-auto">
             <img id="logo" src={logo} alt="Logo" />
           </NavbarBrand>
@@ -52,16 +56,34 @@ export default function Header() {
           <Collapse isOpen={!collapsed} navbar>
             <Nav navbar className="me-auto">
               <NavItem>
-                <NavLink href="/myproject/#/">Home</NavLink>
+                <NavLink
+                  className="nav-link-custom"
+                  color="black"
+                  href="/myproject/#/"
+                >
+                  Home
+                </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="/myproject/#/products">Products</NavLink>
+                <NavLink
+                  className="nav-link-custom"
+                  href="/myproject/#/products"
+                >
+                  Products
+                </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="/myproject/#/contact">Contact</NavLink>
+                <NavLink
+                  className="nav-link-custom"
+                  href="/myproject/#/contact"
+                >
+                  Contact
+                </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="/myproject/#/login">Login</NavLink>
+                <NavLink className="nav-link-custom" href="/myproject/#/login">
+                  Login
+                </NavLink>
               </NavItem>
             </Nav>
             <div className="nav-item-right d-flex">
@@ -84,6 +106,11 @@ export default function Header() {
                   <div className="cartQuantity text-center">
                     <p className="number">{cartCount}</p>
                   </div>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className="user fs-3" href="/myproject/#/login">
+                  <CiUser />
                 </NavLink>
               </NavItem>
             </div>

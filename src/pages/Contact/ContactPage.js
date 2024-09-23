@@ -1,9 +1,9 @@
 import React from 'react'
 import Header from '../../ShopWeb/header/Header'
 import Footer from '../../ShopWeb/footer/Footer'
-import '../Contact/Contact.css'
+import '../Contact/ContactPage.css'
 
-export default function Contact() {
+export default function ContactPage() {
   return (
     <div>
         <Header/>
