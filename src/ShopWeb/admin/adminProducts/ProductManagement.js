@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -11,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from "reactstrap";
+import axiosInstance from "../../ultil/axiosInstance";
 
 const ProductManagement = () => {
   const [modal, setModal] = useState(false);
@@ -19,10 +20,22 @@ const ProductManagement = () => {
   const [productPrice, setProductPrice] = useState("");
   const [productCategory, setProductCategory] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const BaseUrl = 'http://localhost:8080/api/v1'
 
   const toggle = () => {
     setModal(!modal);
   };
+
+  useEffect(() => {
+    axiosInstance.get(`${BaseUrl}/product/getAll`)
+      .then(response => {
+        setProducts(response.data.data);
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+  }, []);
 
   const addProduct = (event) => {
     event.preventDefault();
