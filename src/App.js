@@ -11,6 +11,7 @@ import ProductDetailPage from './pages/ProductDetail/ProductDetailPage';
 import CartsPage from './pages/Carts/CartsPage';
 import CheckOutPage from './pages/CheckOut/CheckOutPage';
 import LoginPage from './pages/Login/LoginPage';
+import AdminHomePage from './pages/admin/adminHomePage/AdminHomePage';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route index element={<HomePage />} exact />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cart" element={<CartsPage />} />
+          <Route path="/admin" element={<AdminHomePage />} />
           <Route path="/product/:productId" element={<ProductDetailPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:category/:price/:search" element={<ProductsPage />} />

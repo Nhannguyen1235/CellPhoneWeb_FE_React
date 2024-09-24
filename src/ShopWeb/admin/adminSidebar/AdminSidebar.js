@@ -1,0 +1,47 @@
+import React from 'react';
+import {
+  CDBSidebar,
+  CDBSidebarContent,
+  CDBSidebarHeader,
+  CDBSidebarMenu,
+  CDBSidebarMenuItem,
+  CDBSidebarFooter,
+} from 'cdbreact';
+import { CiLogout } from "react-icons/ci";
+import "./AdminSidebar.css"
+
+const SideBar = () => {
+  return (
+      <CDBSidebar className='sidebar'>
+        <CDBSidebarHeader prefix={<i className="fa fa-bars" />}>Contrast</CDBSidebarHeader>
+        <CDBSidebarContent>
+          <CDBSidebarMenu>
+            <CDBSidebarMenuItem icon="th-large">Dashboard</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Product Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Account Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Category Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Order Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Brand Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Voucher Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="credit-card" iconType="solid">
+              Metrics
+            </CDBSidebarMenuItem>
+          </CDBSidebarMenu>
+        </CDBSidebarContent>
+
+        <CDBSidebarFooter style={{ textAlign: 'center' }}>
+          <div
+            className="sidebar-btn-wrapper"
+            style={{padding: '20px 5px',fontSize:'25px'}}
+          >
+           <CiLogout/> Logout
+          </div>
+        </CDBSidebarFooter>
+      </CDBSidebar>
+  );
+};
+
+export default SideBar;

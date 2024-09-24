@@ -13,12 +13,13 @@ export default function ProductList() {
   const dispatch = useDispatch(); // Sử dụng hook useDispatch để dispatch các action
   const navigate = useNavigate(); // Sử dụng hook useNavigate để điều hướng URL
   const carts = useSelector((state) => state.carts.carts); // Lấy thông tin giỏ hàng từ Redux store
-  const { category, price, search } = useParams(); // Lấy thông tin từ URL params
+  const { category, price, search, brand } = useParams(); // Lấy thông tin từ URL params
   const products = useSelector((state) => state.products.filteredProducts); // Lấy danh sách sản phẩm đã lọc từ Redux store
   const status = useSelector((state) => state.products.status); // Lấy trạng thái của fetch sản phẩm
   const error = useSelector((state) => state.products.error); // Lấy thông tin lỗi nếu có
   const selectedCategory = useSelector((state) => state.products.selectedCategory); // Lấy danh mục đã chọn
   const selectedPrice = useSelector((state) => state.products.selectedPrice); // Lấy mức giá đã chọn
+  const selectedBrand = useSelector((state) => state.products.selectedBrand); // Lấy mức giá đã chọn
   const searchTerm = useSelector((state) => state.products.searchTerm); // Lấy từ khóa tìm kiếm
 
   const [currentPage, setCurrentPage] = useState(1); // State để quản lý trang hiện tại của phân trang
@@ -66,11 +67,20 @@ export default function ProductList() {
     if (search) {
       dispatch(setSearchTerm(search.toLowerCase())); // Cập nhật từ khóa tìm kiếm
     }
-  }, [category, price, search, dispatch]);
+    if (brand) {
+      dispatch(setCategory(brand.toLowerCase())); // Cập nhật danh mục đã chọn
+    }
+  }, [category, price, search, brand, dispatch]);
 
   const handleCategoryChange = (event) => {
     const selectedCategory = event.target.value.toLowerCase(); // Lấy giá trị danh mục đã chọn
     dispatch(setCategory(selectedCategory)); // Dispatch action cập nhật danh mục
+    updateURL(selectedCategory, selectedPrice, searchTerm); // Cập nhật URL
+  };
+
+  const handleBrandChange = (event) => {
+    const selectedBrand = event.target.value.toLowerCase(); // Lấy giá trị danh mục đã chọn
+    dispatch(setCategory(selectedBrand)); // Dispatch action cập nhật danh mục
     updateURL(selectedCategory, selectedPrice, searchTerm); // Cập nhật URL
   };
 
@@ -111,7 +121,8 @@ export default function ProductList() {
   }
 
   const categories = ["All", "Men", "Women", "Hoodie", "Hat", "Vest", "Bag"]; // Danh sách các danh mục
-  const priceRanges = ["All", "Under $50", "$50 - $100", "Above $100"]; // Danh sách các mức giá
+  const priceRanges = ["All", "Under $50", "$50 - $100", "Above $100"];
+  const brands = ["All", "Nike", "Adidas", "Puma", "Reebok", "Converse", "Vans"]; // Danh sách các mức giá
 
   return (
     <div className="container">
@@ -129,6 +140,20 @@ export default function ProductList() {
                 {categories.map((category) => (
                   <option key={category} value={category.toLowerCase()}>
                     {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-4">
+              <h5>Brands</h5>
+              <select
+                value={selectedBrand}
+                onChange={handleBrandChange}
+                className="form-select"
+              >
+                {brands.map((brand) => (
+                  <option key={brand} value={brand.toLowerCase()}>
+                    {brand}
                   </option>
                 ))}
               </select>

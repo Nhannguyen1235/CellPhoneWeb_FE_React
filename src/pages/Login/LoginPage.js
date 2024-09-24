@@ -8,9 +8,11 @@ export default function LoginPage() {
     
 
     return (
-       <div>
+       <div className='d-flex flex-column min-vh-100'>
         <Header />
+        <div className='flex-fill'>
         <Login />
+        </div>
         <div className='login-footer'>
         <Footer />
         </div>
