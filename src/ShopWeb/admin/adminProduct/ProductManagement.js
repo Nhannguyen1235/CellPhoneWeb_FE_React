@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { fetchProducts, addProduct, fetchCategories } from "../../redux/productSlice";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Form,
@@ -10,56 +12,45 @@ import {
   ModalFooter,
   ModalHeader,
 } from "reactstrap";
-import axiosInstance from "../../ultil/axiosInstance";
 
 const ProductManagement = () => {
+  const dispatch = useDispatch();
+  const {categories} = useSelector(state => state.products);
   const [modal, setModal] = useState(false);
   const [products, setProducts] = useState([]);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
-  const [productImages, setProductImages] = useState([]); // Thay đổi ở đây
+  const [productImages, setProductImages] = useState([]);
   const [productQuantity, setProductQuantity] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productCategory, setProductCategory] = useState("");
-  const BaseUrl = 'http://localhost:8080/api/v1';
 
   const toggle = () => {
+    dispatch(fetchCategories())
     setModal(!modal);
   };
 
   useEffect(() => {
-    axiosInstance.get(`${BaseUrl}/product/getAll`)
+    dispatch(fetchProducts())
       .then(response => {
-        setProducts(response.data.data);
+        setProducts(response.payload);
       })
       .catch(error => {
         console.error('Error fetching products:', error);
       });
-  }, []);
+  }, [dispatch]);
 
-  const addProduct = (event) => {
+  const handleAddProduct = (event) => {
     event.preventDefault();
-    if (productName && productPrice) {
-      const newProduct = {
-        name: productName,
-        price: productPrice,
-        description: productDescription,
-        images: productImages, // Thay đổi ở đây
-        quantity: productQuantity,
-        category: productCategory
-      };
-      setProducts([...products, newProduct]);
-      resetForm();
-      toggle();
-
-      axiosInstance.post(`${BaseUrl}/product/admin/add`, newProduct)
-        .then(response => {
-          console.log('Product added successfully:', response.data);
-        })
-        .catch(error => {
-          console.error('Error adding product:', error);
-        });
-    }
+    const newProduct = {
+      productName: productName,
+      price: productPrice,
+      categoryId: productCategory,
+      productDescription: productDescription,
+      quantity: productQuantity
+    };
+    dispatch(addProduct(newProduct,productImages));
+    resetForm();
   };
 
   const handleImageChange = (e) => {
@@ -72,7 +63,7 @@ const ProductManagement = () => {
     setProductPrice("");
     setProductCategory("");
     setProductDescription("");
-    setProductImages([]); // Reset mảng hình ảnh
+    setProductImages([]);
     setProductQuantity("");
   };
 
@@ -118,10 +109,13 @@ const ProductManagement = () => {
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
               >
-                <option value={""}>Chọn danh mục</option>
-                <option value={"1"}>Danh mục 1</option>
-                <option value={"2"}>Danh mục 2</option>
-                <option value={"3"}>Danh mục 3</option>
+                <option value="">Select Category</option>
+                {
+                categories && categories.map((category, index) => {
+                  return(
+                    <option key={index} value={category.id}>{category.name}</option>
+                  );
+                  })};  
               </Input>
             </FormGroup>
             <FormGroup>
@@ -166,7 +160,7 @@ const ProductManagement = () => {
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={addProduct}>
+          <Button color="primary" onClick={handleAddProduct}>
             Save
           </Button>
           <Button color="secondary" onClick={toggle}>

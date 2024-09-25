@@ -1,12 +1,36 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import axiosInstance from "../ultil/axiosInstance";
 
-const url = 'https://66a07af87053166bcabb8822.mockapi.io/product';
+const BaseUrl = 'http://localhost:8080/api/v1';
 
 // Lấy danh sách sản phẩm từ API
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-    const response = await axios.get(url);
+    const response = await axios.get(`${BaseUrl}/product/getAll`);
+    return response.data.data;
+});
+
+export const fetchCategories = createAsyncThunk('products/fetchCategories', async () => {
+    const response = await axiosInstance.get(`${BaseUrl}/admin/categories`);
     return response.data;
+});
+
+export const addImagesProduct = createAsyncThunk('products/addImagesProduct', async (images, productId) => {
+    const response = await axiosInstance.post(`${BaseUrl}/product/uploads/${productId}`, images);
+    return response.data.data;
+});
+
+export const deleteImagesProduct = createAsyncThunk('products/deleteImagesProduct', async (images, productId) => {
+    const response = await axiosInstance.post(`${BaseUrl}/product/admin/deleteImages/${productId}`, images);
+    return response.data.data;
+});
+
+export const addProduct = createAsyncThunk('products/addProduct', async (product, images) => {
+    const response = await axiosInstance.post(`${BaseUrl}/product/admin/add`, product);
+    const productId = response.data.data.id;
+    await addImagesProduct(images, productId);
+
+    return response.data.data;
 });
 
 // Khởi tạo trạng thái ban đầu
@@ -18,6 +42,7 @@ const initialState = {
     selectedCategory: 'all', // Danh mục sản phẩm đã chọn
     selectedPrice: 'all',    // Phạm vi giá đã chọn
     searchTerm: '',          // Từ khóa tìm kiếm
+    categories: null
 };
 
 // Tạo slice Redux
@@ -92,10 +117,33 @@ const productSlice = createSlice({
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
-            });
+            })
+
+            .addCase(addProduct.pending, (state) => {
+
+            })
+            .addCase(addProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.products.push(action.payload);
+                state.filteredProducts.push(action.payload);
+            })
+            .addCase(fetchCategories.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchCategories.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                // let obj = action.payload.data;
+                // console.log(obj)
+                state.categories = action.payload.data;
+                console.log(action.payload.data);
+            })
+            .addCase(fetchCategories.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
     },
 });
 
-export const { setCategory, setPrice, setSearchTerm } = productSlice.actions;
+export const { setCategory, setPrice, setSearchTerm, setCategories } = productSlice.actions;
 
 export default productSlice.reducer;
