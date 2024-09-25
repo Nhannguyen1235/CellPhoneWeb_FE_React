@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../../../ShopWeb/header/Header'
 import SideBar from '../../../ShopWeb/admin/adminSidebar/AdminSidebar'
 import "./AdminHomePage.css"
-import ProductManagement from '../../../ShopWeb/admin/adminProducts/ProductManagement'
+import ProductManagement from '../../../ShopWeb/admin/adminProduct/ProductManagement'
 
 export default function AdminHomePage() {
   return (

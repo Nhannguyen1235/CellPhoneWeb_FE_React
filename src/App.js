@@ -12,16 +12,18 @@ import CartsPage from './pages/Carts/CartsPage';
 import CheckOutPage from './pages/CheckOut/CheckOutPage';
 import LoginPage from './pages/Login/LoginPage';
 import AdminHomePage from './pages/admin/adminHomePage/AdminHomePage';
+import AdminVoucherPage from './pages/admin/adminVoucherPage/AdminVoucherPage';
+import AdminProductPage from './pages/admin/adminProductPage/AdminProductPage';
+import AdminRoute from './ShopWeb/ultil/AdminRoute';
 
 export default function App() {
   return (
     <Provider store={store}>
       <HashRouter basename="/">
         <Routes>
-          <Route index element={<HomePage />} exact />
+          <Route index element={<HomePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cart" element={<CartsPage />} />
-          <Route path="/admin" element={<AdminHomePage />} />
           <Route path="/product/:productId" element={<ProductDetailPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:category/:price/:search" element={<ProductsPage />} />
@@ -32,6 +34,11 @@ export default function App() {
           <Route path="/products/:price" element={<ProductsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<HomePage />} />
+
+          {/* Routes admin */}
+          <Route path="/admin" element={<AdminRoute><AdminHomePage /></AdminRoute>} />
+          <Route path="/admin/product" element={<AdminRoute><AdminProductPage /></AdminRoute>} />
+          <Route path="/admin/voucher" element={<AdminRoute><AdminVoucherPage /></AdminRoute>} />
         </Routes>
       </HashRouter>
     </Provider>

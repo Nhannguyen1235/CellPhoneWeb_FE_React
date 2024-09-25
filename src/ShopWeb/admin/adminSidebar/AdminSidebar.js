@@ -9,6 +9,7 @@ import {
 } from 'cdbreact';
 import { CiLogout } from "react-icons/ci";
 import "./AdminSidebar.css"
+import { Link } from 'react-router-dom';
 
 const SideBar = () => {
   return (
@@ -17,12 +18,12 @@ const SideBar = () => {
         <CDBSidebarContent>
           <CDBSidebarMenu>
             <CDBSidebarMenuItem icon="th-large">Dashboard</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Product Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem as={Link} to="/admin/product" icon="sticky-note">Product Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Account Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Category Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Order Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Brand Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Voucher Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem as={Link} to="/admin/voucher" icon="sticky-note">Voucher Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>

@@ -5,6 +5,7 @@ export default function Login() {
   const BaseUrl = "http://localhost:8080";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("ROLE_USER");
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [isSignIn, setIsSignIn] = useState(true);
@@ -17,18 +18,22 @@ export default function Login() {
         // Sử dụng đúng đường dẫn đến token
         const accessToken = response.data.data.accessToken;
         const refreshToken = response.data.data.refreshToken;
-  
+        const user = response.data.data.userEntity;
+
         // Lưu accessToken và refreshToken vào cookie
         document.cookie = `accessToken=${accessToken}; path=/; SameSite=Strict; Secure`;
+        document.cookie = `user=${JSON.stringify(user)}; path=/; SameSite=Strict; Secure`;
         if(response.data.data.refreshToken){
           document.cookie = `refreshToken=${refreshToken}; path=/; SameSite=Strict`;
         }else{
           setError('refreshToken không tồn tại. Vui lòng thử lại.');
         }
         
-        console.log(accessToken);
-        console.log(refreshToken);
-        // Chuyển hướng người dùng hoặc cập nhật trạng thái đăng nhập
+        // console.log(accessToken);
+        // console.log(refreshToken);
+        if(response.status === 200){
+          window.location.href = "/";
+        }
       })
       .catch((error) => {
         console.error('Lỗi đăng nhập:', error);
@@ -37,7 +42,7 @@ export default function Login() {
   };
   const handleSignUp = (event) => {
     event.preventDefault();
-    axios.post(`${BaseUrl}/user/register`, { username, password, email })
+    axios.post(`${BaseUrl}/user/register`, { username, password, email, role })
       .then((response) => {
         console.log(response);
         // Chuyển hướng người dùng hoặc cập nhật trạng thái đăng nhập

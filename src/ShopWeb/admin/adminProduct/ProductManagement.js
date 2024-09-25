@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
   Button,
   Form,
   FormGroup,
@@ -17,10 +16,12 @@ const ProductManagement = () => {
   const [modal, setModal] = useState(false);
   const [products, setProducts] = useState([]);
   const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productImages, setProductImages] = useState([]); // Thay đổi ở đây
+  const [productQuantity, setProductQuantity] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productCategory, setProductCategory] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const BaseUrl = 'http://localhost:8080/api/v1'
+  const BaseUrl = 'http://localhost:8080/api/v1';
 
   const toggle = () => {
     setModal(!modal);
@@ -30,7 +31,6 @@ const ProductManagement = () => {
     axiosInstance.get(`${BaseUrl}/product/getAll`)
       .then(response => {
         setProducts(response.data.data);
-        console.log(response.data)
       })
       .catch(error => {
         console.error('Error fetching products:', error);
@@ -40,11 +40,40 @@ const ProductManagement = () => {
   const addProduct = (event) => {
     event.preventDefault();
     if (productName && productPrice) {
-      setProducts([...products, { name: productName, price: productPrice, category: productCategory}]);
-      setProductName("");
-      setProductPrice("");
-      setShowModal(false);
+      const newProduct = {
+        name: productName,
+        price: productPrice,
+        description: productDescription,
+        images: productImages, // Thay đổi ở đây
+        quantity: productQuantity,
+        category: productCategory
+      };
+      setProducts([...products, newProduct]);
+      resetForm();
+      toggle();
+
+      axiosInstance.post(`${BaseUrl}/product/admin/add`, newProduct)
+        .then(response => {
+          console.log('Product added successfully:', response.data);
+        })
+        .catch(error => {
+          console.error('Error adding product:', error);
+        });
     }
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files).map(file => URL.createObjectURL(file));
+    setProductImages(files);
+  };
+
+  const resetForm = () => {
+    setProductName("");
+    setProductPrice("");
+    setProductCategory("");
+    setProductDescription("");
+    setProductImages([]); // Reset mảng hình ảnh
+    setProductQuantity("");
   };
 
   return (
@@ -55,22 +84,13 @@ const ProductManagement = () => {
       </Button>
 
       <Modal isOpen={modal} toggle={toggle}>
-        {/* {error && (
-          <Alert color="danger">
-            <ul>
-              {error.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          </Alert>
-        )} */}
         <ModalHeader toggle={toggle}>Add new product</ModalHeader>
         <ModalBody>
           <Form>
             <FormGroup>
-              <Label for="exampleEmail">Product Name</Label>
+              <Label for="productName">Product Name</Label>
               <Input
-                id="exampleEmail"
+                id="productName"
                 name="name"
                 placeholder="Product Name"
                 type="text"
@@ -79,9 +99,9 @@ const ProductManagement = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="exampleEmail">Product Price</Label>
+              <Label for="productPrice">Product Price</Label>
               <Input
-                id="exampleEmail"
+                id="productPrice"
                 name="price"
                 placeholder="Product Price"
                 type="number"
@@ -90,9 +110,9 @@ const ProductManagement = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="exampleSelect">Product Category</Label>
+              <Label for="productCategory">Product Category</Label>
               <Input
-                id="exampleSelect"
+                id="productCategory"
                 name="category"
                 type="select"
                 value={productCategory}
@@ -105,22 +125,50 @@ const ProductManagement = () => {
               </Input>
             </FormGroup>
             <FormGroup>
-              <Label for="exampleDate">Ngày sinh</Label>
+              <Label for="productDescription">Product Description</Label>
               <Input
-                id="exampleDate"
-                name="birthdate"
-                placeholder="date placeholder"
-                type="date"
-                value={productPrice}
-                onChange={(e) => setProductPrice(e.target.value)}
+                id="productDescription"
+                name="description"
+                placeholder="Product Description"
+                type="text"
+                value={productDescription}
+                onChange={(e) => setProductDescription(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="productImages">Product Images</Label>
+              <Input
+                id="productImages"
+                name="images"
+                type="file"
+                multiple
+                onChange={handleImageChange}
+              />
+            </FormGroup>
+            {productImages.length > 0 && (
+              <div className="image-preview">
+                {productImages.map((image, index) => (
+                  <img key={index} src={image} alt={`Product img ${index + 1}`} style={{ width: '100px', margin: '5px' }} />
+                ))}
+              </div>
+            )}
+            <FormGroup>
+              <Label for="productQuantity">Product Quantity</Label>
+              <Input
+                id="productQuantity"
+                name="quantity"
+                placeholder="Product Quantity"
+                type="number"
+                value={productQuantity}
+                onChange={(e) => setProductQuantity(e.target.value)}
               />
             </FormGroup>
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary">
+          <Button color="primary" onClick={addProduct}>
             Save
-          </Button>{" "}
+          </Button>
           <Button color="secondary" onClick={toggle}>
             Cancel
           </Button>
@@ -149,15 +197,6 @@ const ProductManagement = () => {
           ))}
         </tbody>
       </table>
-
-      {/* Thêm style cho modal */}
-      <style jsx>{`
-        .modal {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      `}</style>
     </div>
   );
 };
