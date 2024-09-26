@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 
 const CheckoutPage = () => {
     const dispatch = useDispatch();
-    const carts = useSelector((state) => state.carts.carts); // Fix: state.carts.carts -> state.cart.carts
+    const carts = useSelector((state) => state.cart.carts); // Fix: state.carts.carts -> state.cart.carts
     const [address, setAddress] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');

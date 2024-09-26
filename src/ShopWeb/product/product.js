@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchProducts } from "../redux/productSlice";
+import { fetchProductById, fetchNameImagesProduct, fetchImagesProduct } from "../redux/productSlice";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -12,21 +12,28 @@ import Swal from "sweetalert2";
 export default function Product() {
   const dispatch = useDispatch();
   const { productId } = useParams();
-  const carts = useSelector((state) => state.carts.carts);
+  const carts = useSelector((state) => state.cart.carts);
   const [mainImage, setMainImage] = useState("");
+  const [productImages, setProductImages] = useState([]);
   const swiperRef = useRef(null);
 
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+  const { currentProduct, status, error } = useSelector((state) => state.products);
 
-   // Lưu carts vào localStorage khi có thay đổi
-   useEffect(() => {
-    // Chỉ lưu vào localStorage khi carts thay đổi
+  useEffect(() => {
+    dispatch(fetchProductById({productId}));
+  }, [dispatch, productId]);
+
+  useEffect(() => {
     if (carts.length > 0) {
       localStorage.setItem('carts', JSON.stringify(carts));
     }
   }, [carts]);
+
+  useEffect(() => {
+    if (currentProduct) {
+      handleFetchImages(currentProduct.id);
+    }
+  }, [currentProduct]);
 
   const handleAddToCart = (product) => {
     dispatch(addCart(product));
@@ -37,21 +44,38 @@ export default function Product() {
     });
   };
 
-  const product = useSelector((state) =>
-    state.products.products.find((product) => product.id === productId)
-  );
+  const handleFetchImages = async (productId) => {
+    try {
+      const imageNames = await dispatch(
+        fetchNameImagesProduct({ productId })
+      ).unwrap();
+      const imageUrls = await Promise.all(
+        imageNames.map(async (image) => {
+          const response = await dispatch(
+            fetchImagesProduct({
+              imageName: image.imageUrl,
+              options: { responseType: "blob" },
+            })
+          ).unwrap();
 
-  useEffect(() => {
-    if (product) {
-      setMainImage(require(`../../imgs/${product.image}.jpg`));
+          if (response instanceof Blob) {
+            return URL.createObjectURL(response);
+          } else {
+            console.error("Phản hồi không phải là Blob:", response);
+            return null;
+          }
+        })
+      );
+
+      const validImageUrls = imageUrls.filter((url) => url !== null);
+      setProductImages(validImageUrls);
+      if (validImageUrls.length > 0) {
+        setMainImage(validImageUrls[0]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải ảnh cho sản phẩm:", productId, error);
     }
-  }, [product]);
-
-  if (!product) {
-    return <div>Product not found</div>;
-  }
-
-  const allImages = [product.image, ...product.imageSub];
+  };
 
   const handleNext = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -65,6 +89,18 @@ export default function Product() {
     }
   };
 
+  if (status === 'loading') {
+    return <div>Đang tải...</div>;
+  }
+
+  if (status === 'failed') {
+    return <div>Lỗi: {error}</div>;
+  }
+
+  if (!currentProduct) {
+    return <div>Sản phẩm không tồn tại</div>;
+  }
+
   return (
     <div className="container product-details">
       <div className="row text-center">
@@ -72,7 +108,7 @@ export default function Product() {
           {/* Hiển thị hình ảnh chính trên màn hình lớn */}
           <img
             src={mainImage}
-            alt={product.name}
+            alt={currentProduct.name}
             className="img-fluid main-image d-none d-md-block"
           />
           {/* Hiển thị slider trên màn hình nhỏ */}
@@ -90,10 +126,10 @@ export default function Product() {
               }}
               modules={[Autoplay, Pagination, Navigation]}
             >
-              {allImages.map((image, index) => (
+              {productImages.map((image, index) => (
                 <SwiperSlide key={index}>
                   <img
-                    src={require(`../../imgs/${image}.jpg`)}
+                    src={image}
                     alt={`sub-${index}`}
                     className="img-fluid"
                   />
@@ -111,30 +147,25 @@ export default function Product() {
           </div>
         </div>
         <div className="col-md-6">
-          <h2>{product.name}</h2>
-          <p>Price: ${product.price}</p>
-          <p>Category: {product.category.join(", ")}</p>
-          <p>
-            Description: Lorem ipsum dolor sit amet, consectetur adipiscing
-            elit. Nullam non urna sit amet tortor sollicitudin pharetra.
-          </p>
-          <button className="btn btn-primary" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+          <h2>{currentProduct.name}</h2>
+          <p>Giá: ${currentProduct.price}</p>
+          <p>Danh mục: {currentProduct.category.name}</p>
+          <p>Mô tả: {currentProduct.description}</p>
+          <button className="btn btn-primary" onClick={() => handleAddToCart(currentProduct)}>Thêm vào giỏ hàng</button>
         </div>
       </div>
       <div className="row mt-4 d-none d-md-flex">
-        {product.imageSub && product.imageSub.length > 0 && (
+        {productImages.length > 0 && (
           <div className="col-md-12">
-            <h3>Additional Images</h3>
+            <h3>Hình ảnh bổ sung</h3>
             <div className="image-thumbnails">
-              {allImages.map((image, index) => (
+              {productImages.map((image, index) => (
                 <img
                   key={index}
-                  src={require(`../../imgs/${image}.jpg`)}
+                  src={image}
                   alt={`sub-${index}`}
                   className="img-thumbnail"
-                  onClick={() =>
-                    setMainImage(require(`../../imgs/${image}.jpg`))
-                  }
+                  onClick={() => setMainImage(image)}
                 />
               ))}
             </div>

@@ -10,6 +10,12 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
     return response.data.data;
 });
 
+export const fetchProductById = createAsyncThunk('products/fetchProductById', async ({productId}) => {
+    const response = await axiosInstance.get(`${BaseUrl}/product/${productId}`);
+    console.log(response.data.data)
+    return response.data.data;
+});
+
 export const fetchNameImagesProduct = createAsyncThunk('products/fetchImagesProduct', async ({productId}) => {
     const response = await axiosInstance.get(`${BaseUrl}/product/image/getAllImageProduct/${productId}`);
     return response.data.data;
@@ -92,6 +98,21 @@ const productSlice = createSlice({
     name: 'products',
     initialState,
     reducers: {
+
+        setBrand: (state, action) => {
+            const brand = action.payload.toLowerCase();
+            state.selectedBrand = brand;
+            // Áp dụng bộ lọc dựa trên thương hiệu, danh mục, phạm vi giá và từ khóa tìm kiếm
+            state.filteredProducts = state.products.filter(product =>
+                (state.selectedCategory === 'all' || product.category.map(c => c.toLowerCase()).includes(state.selectedCategory)) &&
+                (state.searchTerm === '' || product.name.toLowerCase().includes(state.searchTerm)) &&
+                (state.selectedPrice === 'all' ||
+                (state.selectedPrice === 'under $50' && product.price < 50) ||
+                (state.selectedPrice === '$50 - $100' && product.price >= 50 && product.price <= 100) ||
+                (state.selectedPrice === 'above $100' && product.price > 100)) &&
+                (brand === 'all' || product.brand.toLowerCase() === brand)
+            );
+        },
         // Cập nhật danh mục lọc sản phẩm
         setCategory: (state, action) => {
             const category = action.payload.toLowerCase();
@@ -141,6 +162,22 @@ const productSlice = createSlice({
             .addCase(fetchProducts.pending, (state) => {
                 state.status = 'loading';
             })
+
+            .addCase(fetchProductById.pending, (state)=>{
+                state.status = 'loading';
+
+            })
+
+            .addCase(fetchProductById.fulfilled,(state,action)=>{
+                state.status = 'succeeded';
+                state.currentProduct = action.payload;
+
+            })
+            .addCase(fetchProductById.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+        
             // Khi lấy sản phẩm từ API thành công
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.status = 'succeeded';
@@ -177,7 +214,6 @@ const productSlice = createSlice({
                 // let obj = action.payload.data;
                 // console.log(obj)
                 state.categories = action.payload.data;
-                console.log(action.payload.data);
             })
             .addCase(fetchCategories.rejected, (state, action) => {
                 state.status = 'failed';
@@ -186,6 +222,6 @@ const productSlice = createSlice({
     },
 });
 
-export const { setCategory, setPrice, setSearchTerm, setCategories,setBrand } = productSlice.actions;
+export const { setCategory, setPrice, setSearchTerm, setCategories} = productSlice.actions;
 
 export default productSlice.reducer;

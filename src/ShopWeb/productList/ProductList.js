@@ -4,9 +4,10 @@ import {
   setCategory,
   setPrice,
   setSearchTerm,
-  setBrand,
   fetchNameImagesProduct,
   fetchImagesProduct,
+  fetchCategories,
+  fetchProducts,
 } from "../redux/productSlice";
 import AOS from "aos";
 import Swal from "sweetalert2";
@@ -19,9 +20,9 @@ import "./ProductList.css";
 export default function ProductList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { categories } = useSelector((state) => state.products);
   const carts = useSelector((state) => state.cart.carts);
   const [productImageMap, setProductImageMap] = useState({});
-  const { category, price, search, brand } = useParams();
   const products = useSelector((state) => state.products.filteredProducts);
   const status = useSelector((state) => state.products.status);
   const error = useSelector((state) => state.products.error);
@@ -29,7 +30,6 @@ export default function ProductList() {
     (state) => state.products.selectedCategory
   );
   const selectedPrice = useSelector((state) => state.products.selectedPrice);
-  const selectedBrand = useSelector((state) => state.products.selectedBrand);
   const searchTerm = useSelector((state) => state.products.searchTerm);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,7 +37,9 @@ export default function ProductList() {
 
   useEffect(() => {
     AOS.init();
-  }, []);
+    dispatch(fetchProducts());
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   useEffect(() => {
     const storedCarts = localStorage.getItem("carts");
@@ -70,8 +72,17 @@ export default function ProductList() {
   };
 
   useEffect(() => {
-    dispatch(handleFetchImages());
-  }, [dispatch]);
+    const fetchImagesForProducts = async () => {
+      for (const product of products) {
+        if (!productImageMap[product.id]) {
+          await handleFetchImages(product.id);
+        }
+      }
+    };
+    if (products.length > 0) {
+      fetchImagesForProducts();
+    }
+  }, [products, productImageMap]);
 
   const handleFetchImages = async (productId) => {
     try {
@@ -106,54 +117,41 @@ export default function ProductList() {
     }
   };
 
-  useEffect(() => {
-    if (category) {
-      dispatch(setCategory(category.toLowerCase()));
-    }
-    if (price) {
-      dispatch(setPrice(price.toLowerCase()));
-    }
-    if (search) {
-      dispatch(setSearchTerm(search.toLowerCase()));
-    }
-    if (brand) {
-      dispatch(setBrand(brand.toLowerCase()));
-    }
-  }, [category, price, search, brand, dispatch]);
+  if (status === "loading") {
+    return <div>Đang tải...</div>;
+  }
+
+  if (status === "failed") {
+    return <div>Lỗi: {error}</div>;
+  }
+
 
   const handleCategoryChange = (event) => {
     const selectedCategory = event.target.value.toLowerCase();
     dispatch(setCategory(selectedCategory));
-    updateURL(selectedCategory, selectedPrice, selectedBrand, searchTerm);
-  };
-
-  const handleBrandChange = (event) => {
-    const selectedBrand = event.target.value.toLowerCase();
-    dispatch(setBrand(selectedBrand));
-    updateURL(selectedCategory, selectedPrice, selectedBrand, searchTerm);
+    updateURL(selectedCategory, selectedPrice, searchTerm);
   };
 
   const handlePriceChange = (event) => {
     const selectedPrice = event.target.value.toLowerCase();
     dispatch(setPrice(selectedPrice));
-    updateURL(selectedCategory, selectedPrice, selectedBrand, searchTerm);
+    updateURL(selectedCategory, selectedPrice, searchTerm);
   };
 
   const handleSearchChange = (event) => {
     const newSearchText = event.target.value.toLowerCase();
     dispatch(setSearchTerm(newSearchText));
-    updateURL(selectedCategory, selectedPrice, selectedBrand, newSearchText);
+    updateURL(selectedCategory, selectedPrice, newSearchText);
   };
 
-  const updateURL = (category, price, brand, search) => {
+  const updateURL = (category, price, search) => {
     const basePath = `/products`;
     const categoryPath =
       category && category !== "all" ? `/${category}` : "/all";
     const pricePath = price && price !== "all" ? `/${price}` : "/all";
-    const brandPath = brand && brand !== "all" ? `/${brand}` : "/all";
     const searchPath = search ? `/${search}` : "";
 
-    navigate(`${basePath}${categoryPath}${pricePath}${brandPath}${searchPath}`);
+    navigate(`${basePath}${categoryPath}${pricePath}${searchPath}`);
   };
 
   const handlePageChange = (event, page) => {
@@ -170,19 +168,6 @@ export default function ProductList() {
   if (status === "failed") {
     return <div className="text-center text-danger">Error: {error}</div>;
   }
-
-  const categories = ["All", "Men", "Women", "Hoodie", "Hat", "Vest", "Bag"];
-  const priceRanges = ["All", "Under $50", "$50 - $100", "Above $100"];
-  const brands = [
-    "All",
-    "Nike",
-    "Adidas",
-    "Puma",
-    "Reebok",
-    "Converse",
-    "Vans",
-  ];
-
   return (
     <div className="container">
       <div className="row">
@@ -196,25 +181,12 @@ export default function ProductList() {
                 onChange={handleCategoryChange}
                 className="form-select"
               >
-                {categories.map((category) => (
-                  <option key={category} value={category.toLowerCase()}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-4">
-              <h5>Brands</h5>
-              <select
-                value={selectedBrand}
-                onChange={handleBrandChange}
-                className="form-select"
-              >
-                {brands.map((brand) => (
-                  <option key={brand} value={brand.toLowerCase()}>
-                    {brand}
-                  </option>
-                ))}
+                {Array.isArray(categories) &&
+                  categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
               </select>
             </div>
             <div className="mb-4">
@@ -224,11 +196,10 @@ export default function ProductList() {
                 onChange={handlePriceChange}
                 className="form-select"
               >
-                {priceRanges.map((priceRange) => (
-                  <option key={priceRange} value={priceRange.toLowerCase()}>
-                    {priceRange}
-                  </option>
-                ))}
+                <option value="all">All</option>
+                <option value="under50">Under $50</option>
+                <option value="50to100">$50 - $100</option>
+                <option value="above100">Above $100</option>
               </select>
             </div>
             <div className="mb-4">
