@@ -20,7 +20,7 @@ const SideBar = () => {
             <CDBSidebarMenuItem icon="th-large">Dashboard</CDBSidebarMenuItem>
             <CDBSidebarMenuItem as={Link} to="/admin/product" icon="sticky-note">Product Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Account Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Category Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem as={Link} to="/admin/category" icon="sticky-note">Category Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Order Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem icon="sticky-note">Brand Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem as={Link} to="/admin/voucher" icon="sticky-note">Voucher Management</CDBSidebarMenuItem>

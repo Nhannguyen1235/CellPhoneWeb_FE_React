@@ -30,12 +30,17 @@ const asyncDispatchMiddleware = store => next => action => {
   return action;
 };
 
+import cartReducer from './cartSlice';
+import categoryReducer from './categorySlice';
+import voucherReducer from './voucherSlice';
 export const store = configureStore({
   reducer: {
     slider: sliderReducer,
     products: productReducer,
     scrollUp: scrollUpReducer,
-    cart: cartReducer,
+    carts: cartReducer,
+    category: categoryReducer,
+    voucher: voucherReducer
   },
   middleware:(getDefaultMiddLeware) =>
     getDefaultMiddLeware().concat(saveCartsMiddleware,asyncDispatchMiddleware)
