@@ -9,7 +9,7 @@ const BASE_URL = "http://localhost:8080/api/v1";
 export const getAllCategories = createAsyncThunk("category/getAll", async (thunkAPI) => {
     const url = `${BASE_URL}/admin/categories`;
     try {
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
