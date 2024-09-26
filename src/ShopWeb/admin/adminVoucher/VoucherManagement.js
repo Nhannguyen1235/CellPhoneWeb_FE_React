@@ -1,158 +1,298 @@
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  Button,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from "reactstrap";
-import axiosInstance from "../../ultil/axiosInstance";
+import { Alert, Button, Container, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Table } from "reactstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteVoucher, getAllVouchers, createVoucher, getVoucherByCode,updateVoucher, resetStatusAndMessage } from "../../redux/voucherSlice";
+import { FaTrash, FaRegSave } from "react-icons/fa";
+import { LuClipboardEdit } from "react-icons/lu";
+import Swal from "sweetalert2";
+import "./VoucherManagement.css";
 
-const VoucherManagement = () => {
+export default function VoucherManagement() {
+  const [showMessage, setShowMessage] = useState(false);
+  const dispatch = useDispatch();
+  const { vouchers, status, message } = useSelector((state) => state.voucher);
+
+  useEffect(() => {
+    dispatch(getAllVouchers());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (status && message) {
+      setShowMessage(true);
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+        dispatch(resetStatusAndMessage());
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [status, message, dispatch]);
+
   const [modal, setModal] = useState(false);
-  const [vouchers, setVouchers] = useState([]);
-  const [voucherName, setVoucherName] = useState("");
-  const [voucherPrice, setVoucherPrice] = useState("");
-  const [voucherCategory, setVoucherCategory] = useState("");
-  const [voucherExpiredDate, setVoucherExpiredDate] = useState("");
-  const BaseUrl = "http://localhost:8080/api/v1";
+  const [errorMessage, setErrorMessage] = useState("");
+  const [newVoucherData, setNewVoucherData] = useState({
+    code: "",
+    discountAmount: "",
+    expirationDate: "",
+    isActive: true,
+    minOrderValue: "",
+  });
+
+  const handleAddVoucher = () => {
+    dispatch(createVoucher(newVoucherData))
+      .unwrap()
+      .then((response) => {
+        if (response.status === 200) {
+          resetNewVoucherForm();
+          setErrorMessage("");
+          dispatch(getAllVouchers());
+          toggle();
+        }
+      })
+      .catch((error) => {
+        console.log("Error adding voucher:", error);
+        if (error.status === 400 && error.message) {
+          const validationErrors = error.data;
+          setErrorMessage(
+            <ul>
+              {validationErrors.map((err, index) => (
+                <li key={index}>{err}</li>
+              ))}
+            </ul>
+          );
+        } else if (error.status === 409) {
+          setErrorMessage(<ul><li>{error.data}</li></ul>); 
+        } else {
+          setErrorMessage(<ul><li>Đã xảy ra lỗi khi thêm voucher!</li></ul>);
+        }
+      });
+  };
+  
+  
 
   const toggle = () => {
     setModal(!modal);
-  };
-
-  useEffect(() => {
-    axiosInstance
-      .get(`${BaseUrl}/voucher/getAll`)
-      .then((response) => {
-        setVouchers(response.data.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
-  }, []);
-
-  const addVoucher = (event) => {
-    event.preventDefault();
-    if (voucherName && voucherPrice) {
-      setVouchers([
-        ...vouchers,
-        {
-          name: voucherName,
-          price: voucherPrice,
-          category: voucherCategory,
-          expiredDate: voucherExpiredDate,
-        },
-      ]);
-      setVoucherName("");
-      setVoucherPrice("");
-      setVoucherCategory("");
-      setVoucherExpiredDate("");
-      toggle();
+    if (!modal) {
+      setErrorMessage("");
     }
   };
 
+  const resetNewVoucherForm = () => {
+    setNewVoucherData({
+      code: "",
+      discountAmount: "",
+      expirationDate: "",
+      isActive: true,
+      minOrderValue: "",
+    });
+    setErrorMessage(""); // Reset error message khi đóng modal
+  };
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: 'Bạn có chắc chắn muốn xóa voucher này?',
+      text: "Hành động này không thể hoàn tác!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Chắc chắn!',
+      cancelButtonText: 'Hủy'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteVoucher(id)).then(() => {
+          dispatch(getAllVouchers());
+        });
+      }
+    });
+  };
+
+  const [editVoucher, setEditVoucher] = useState({ isEdit: false, id: "" });
+  const [editedVoucherData, setEditedVoucherData] = useState({ code: "", discountAmount: "", expirationDate: "", minOrderValue: "" });
+
+  const handleEdit = (item) => {
+    setEditVoucher({ isEdit: true, id: item.id });
+    setEditedVoucherData({ 
+      code: item.code, 
+      discountAmount: item.discountAmount, 
+      expirationDate: item.expirationDate.split('T')[0],
+      minOrderValue: item.minOrderValue 
+    });
+  };
+
+  const handleSave = (id) => {
+    dispatch(updateVoucher({ voucherId: id, voucherDTO: editedVoucherData }));
+    setEditVoucher({ isEdit: false, id: "" });
+  };
+
+  // const [voucherCode, setVoucherCode] = useState(""); // Thêm state cho mã voucher
+
+  // const handleSearchByCode = () => {
+  //   if (voucherCode.trim()) {
+  //     dispatch(getVoucherByCode(voucherCode));
+  //   }
+  // };
+
   return (
-    <div className="mt-4 p-4">
-      <h2>Voucher Management</h2>
-      <Button className="btn btn-success" onClick={toggle}>
-        Add new voucher
-      </Button>
-
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Add new voucher</ModalHeader>
-        <ModalBody>
-          <Form>
-            <FormGroup>
-              <Label for="exampleEmail">Voucher Name</Label>
-              <Input
-                id="exampleEmail"
-                name="name"
-                placeholder="Voucher Name"
-                type="text"
-                value={voucherName}
-                onChange={(e) => setVoucherName(e.target.value)}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="exampleEmail">Voucher Price</Label>
-              <Input
-                id="exampleEmail"
-                name="price"
-                placeholder="Voucher Price"
-                type="number"
-                value={voucherPrice}
-                onChange={(e) => setVoucherPrice(e.target.value)}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="exampleSelect">Voucher Category</Label>
-              <Input
-                id="exampleSelect"
-                name="category"
-                type="select"
-                value={voucherCategory}
-                onChange={(e) => setVoucherCategory(e.target.value)}
-              >
-                <option value={""}>Chọn danh mục</option>
-                <option value={"1"}>Danh mục 1</option>
-                <option value={"2"}>Danh mục 2</option>
-                <option value={"3"}>Danh mục 3</option>
-              </Input>
-            </FormGroup>
-            <FormGroup>
-              <Label for="exampleDate">Voucher Expired Date</Label>
-              <Input
-                id="exampleDate"
-                name="expiredDate"
-                placeholder="date placeholder"
-                type="date"
-                value={voucherExpiredDate}
-                onChange={(e) => setVoucherExpiredDate(e.target.value)}
-              />
-            </FormGroup>
-          </Form>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={addVoucher}>
-            Save
-          </Button>{" "}
-          <Button color="secondary" onClick={toggle}>
-            Cancel
+    <div>
+      <Container>
+        <div className='title-page-admin'>
+            <Container>
+                <h1>Voucher Management</h1>
+            </Container>
+        </div>
+        {showMessage && (
+          <Alert color={status === 200 ? "success" : "danger"}>{message}</Alert>
+        )}
+        {/* <FormGroup className="d-flex align-items-center mb-3">
+          <Input 
+            type="text" 
+            placeholder="Nhập mã voucher cần tìm..." 
+            value={voucherCode} 
+            onChange={(e) => setVoucherCode(e.target.value)} 
+          />
+          <Button color="primary" onClick={handleSearchByCode} className="ml-2">
+            Tìm kiếm
           </Button>
-        </ModalFooter>
-      </Modal>
-
-      <h3>Voucher List</h3>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {vouchers.map((voucher, index) => (
-            <tr key={index}>
-              <td>{voucher.name}</td>
-              <td>{voucher.price}</td>
-              <td>
-                <button className="btn btn-primary">Edit</button>
-                <button className="btn btn-danger">Delete</button>
-              </td>
+        </FormGroup> */}
+        <Button className="btn btn-success mb-5" onClick={toggle}>
+          Tạo mới Voucher
+        </Button>
+        <div className='title-list'>
+            <Container>
+                <h2>Voucher List</h2>
+            </Container>
+          </div>
+        <Modal isOpen={modal} toggle={toggle}>
+          <ModalHeader toggle={toggle}>Tạo mới Voucher</ModalHeader>
+          <ModalBody>
+          {errorMessage && <Alert color="danger">{errorMessage}</Alert>}
+            <Form>
+              <FormGroup>
+                <Label for="voucherCode">Mã voucher</Label>
+                <Input
+                  id="voucherCode"
+                  value={newVoucherData.code}
+                  onChange={(e) => setNewVoucherData({ ...newVoucherData, code: e.target.value })}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="discountAmount">Số tiền giảm giá</Label>
+                <Input
+                  id="discountAmount"
+                  type="number"
+                  value={newVoucherData.discountAmount}
+                  onChange={(e) => setNewVoucherData({ ...newVoucherData, discountAmount: e.target.value })}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="expirationDate">Ngày Hết Hạn</Label>
+                <Input
+                  id="expirationDate"
+                  type="date"
+                  value={newVoucherData.expirationDate}
+                  onChange={(e) => setNewVoucherData({ ...newVoucherData, expirationDate: e.target.value })}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="minOrderValue">Giá trị đơn hàng tối thiểu</Label>
+                <Input
+                  id="minOrderValue"
+                  type="number"
+                  value={newVoucherData.minOrderValue}
+                  onChange={(e) => setNewVoucherData({ ...newVoucherData, minOrderValue: e.target.value })}
+                />
+              </FormGroup>
+              <FormGroup className="css_checkbox" >
+                <Label for="isActive">Hoạt động: </Label>
+                <div className="css_checkbox_model">
+                  <Input
+                    id="isActive"
+                    type="checkbox"
+                    checked={newVoucherData.isActive}
+                    onChange={(e) => setNewVoucherData({ ...newVoucherData, isActive: e.target.checked })}
+                  />
+                </div>
+                
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={handleAddVoucher}>
+              Lưu
+            </Button>
+            <Button color="secondary" onClick={toggle}>
+              Hủy
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <Table hover>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Code</th>
+              <th>Discount Amount</th>
+              <th>Expiration Date</th>
+              <th>Is Active</th>
+              <th>Min Order Value</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {vouchers && vouchers.map((item, index) => (
+              <tr key={index} className={editVoucher.isEdit && item.id === editVoucher.id ? "voucher-item active" : "voucher-item"}>
+                <th scope="row">{index + 1}</th>
+                <td>
+                  {editVoucher.isEdit && item.id === editVoucher.id ? (
+                    <Input type="text" value={editedVoucherData.code} onChange={(e) => setEditedVoucherData({ ...editedVoucherData, code: e.target.value })} />
+                  ) : (
+                    item.code
+                  )}
+                </td>
+                <td>
+                  {editVoucher.isEdit && item.id === editVoucher.id ? (
+                    <Input type="number" value={editedVoucherData.discountAmount} onChange={(e) => setEditedVoucherData({ ...editedVoucherData, discountAmount: e.target.value })} />
+                  ) : (
+                    item.discountAmount
+                  )}
+                </td>
+                <td>
+                  {editVoucher.isEdit && item.id === editVoucher.id ? (
+                    <Input type="date" value={editedVoucherData.expirationDate} onChange={(e) => setEditedVoucherData({ ...editedVoucherData, expirationDate: e.target.value })} />
+                  ) : (
+                    new Date(item.expirationDate).toLocaleDateString() // Chuyển đổi định dạng ngày
+                  )}
+                </td>
+                <td>
+                  {editVoucher.isEdit && item.id === editVoucher.id ? (
+                    <div className="css_checkbox">
+                      <Input type="checkbox" checked={editedVoucherData.isActive} onChange={(e) => setEditedVoucherData({ ...editedVoucherData, isActive: e.target.checked })} />
+                    </div>
+                  ) : (
+                    (item.isActive ? "Có" : "Không")
+                  )}
+                </td>
+                <td>
+                  {editVoucher.isEdit && item.id === editVoucher.id ? (
+                    <Input type="number" value={editedVoucherData.minOrderValue} onChange={(e) => setEditedVoucherData({ ...editedVoucherData, minOrderValue: e.target.value })} />
+                  ) : (
+                    item.minOrderValue
+                  )}
+                </td>
+                <td>
+                  {editVoucher.isEdit && item.id === editVoucher.id ? (
+                    <Button color="success" onClick={() => handleSave(item.id)}><FaRegSave /></Button>
+                  ) : (
+                    <div className="function">
+                      <Button color="success" onClick={() => handleEdit(item)}><LuClipboardEdit /></Button>
+                      <Button color="danger" onClick={() => handleDelete(item.id)}><FaTrash /></Button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Container>
     </div>
   );
-};
-
-export default VoucherManagement;
+}
