@@ -10,23 +10,19 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
     return response.data.data;
 });
 
-export const fetchNameImagesProduct = createAsyncThunk(
-    'products/fetchNameImagesProduct',
-    async ({ productId }, { rejectWithValue }) => {
-      try {
-        const response = await axiosInstance.get(`${BaseUrl}/product/image/getAllImageProduct/${productId}`);
-        return response.data.data;
-      } catch (error) {
-        return rejectWithValue(error.response.data);
-      }
-    }
-  );
+export const fetchNameImagesProduct = createAsyncThunk('products/fetchImagesProduct', async ({productId}) => {
+    const response = await axiosInstance.get(`${BaseUrl}/product/image/getAllImageProduct/${productId}`);
+    return response.data.data;
+});
 
-  export const fetchImagesProduct = createAsyncThunk(
+export const fetchImagesProduct = createAsyncThunk(
     'products/fetchImagesProduct',
     async ({ imageName, options }, { rejectWithValue }) => {
       try {
-        const response = await axiosInstance.get(`${BaseUrl}/product/image/images/${imageName}`, options);
+        const response = await axios.get(`${BaseUrl}/product/image/images/${imageName}`, {
+          responseType: 'blob',
+          ...options
+        });
         return response.data;
       } catch (error) {
         return rejectWithValue(error.response.data);
@@ -187,43 +183,9 @@ const productSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.error.message;
             })
-            .addCase(fetchNameImagesProduct.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(fetchNameImagesProduct.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.images = action.payload;
-            })
-            .addCase(fetchNameImagesProduct.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message;
-            })
-            .addCase(fetchImagesProduct.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(fetchImagesProduct.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.images = action.payload;
-            })
-            .addCase(fetchImagesProduct.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message;
-            })
-
-            .addCase(deleteImagesProduct.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(deleteImagesProduct.fulfilled, (state, action) => {
-                state.status = 'succeeded';
-                state.images = action.payload;
-            })
-            .addCase(deleteImagesProduct.rejected, (state, action) => {
-                state.status = 'failed';
-                state.error = action.error.message;
-            })
     },
 });
 
-export const { setCategory, setPrice, setSearchTerm, setCategories } = productSlice.actions;
+export const { setCategory, setPrice, setSearchTerm, setCategories,setBrand } = productSlice.actions;
 
 export default productSlice.reducer;
