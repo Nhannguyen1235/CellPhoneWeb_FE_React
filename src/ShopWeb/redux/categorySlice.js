@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import axiosInstance from "../ultil/axiosInstance";
 
+
 const BASE_URL = "http://localhost:8080/api/v1";
 // const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -38,9 +39,10 @@ export const getCategoriesByName = createAsyncThunk("category/getByName", async(
   }
 );
 
-export const createCategory = createAsyncThunk("category/createCategory", async(categoryData, thunkAPI) => {
+export const createCategory = createAsyncThunk("category/createCategory", async(name, thunkAPI) => {
     try {
-      const response = await axiosInstance.post("/categories/admin/create", categoryData);
+      const url = `${BASE_URL}/admin/categories/create`;
+      const response = await axiosInstance.post(url, name);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -94,7 +96,7 @@ const categorySlice = createSlice({
       .addCase(getAllCategories.fulfilled, (state, action) => {
         state.categories = action.payload.data;
         state.status = action.payload.status;
-        state.message = action.payload.message;
+        // state.message = action.payload.message;
       })
       .addCase(getAllCategories.rejected, (state, action) => {
         state.status = action.payload.status;
@@ -118,7 +120,7 @@ const categorySlice = createSlice({
       })
       .addCase(createCategory.rejected, (state, action) => {
         state.status = action.payload.status;
-        state.message = action.payload.message;
+        state.message = action.payload.data;
         state.error = action.payload;
       })
       .addCase(updateCategory.fulfilled, (state, action) => {

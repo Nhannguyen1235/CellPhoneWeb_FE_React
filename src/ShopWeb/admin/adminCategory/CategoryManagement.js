@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Container, FormGroup, Input, Label, Table } from "reactstrap";
+import { Alert, Button, Container, Input, Table } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCategory, getAllCategories, createCategory, updateCategory, resetStatusAndMessage } from "../../redux/categorySlice";
 import { FaTrash, FaRegSave } from "react-icons/fa";
 import { LuClipboardEdit } from "react-icons/lu";
-// import './category.css';
+import "./CategoryManagement.css"
+import Swal from "sweetalert2";
 
 export default function CategoryManagement() {
   const [showMessage, setShowMessage] = useState(false);
@@ -19,7 +20,7 @@ export default function CategoryManagement() {
   useEffect(() => {
     if (status && message) {
       setShowMessage(true);
-
+ 
       const timer = setTimeout(() => {
         setShowMessage(false);
         dispatch(resetStatusAndMessage());
@@ -29,8 +30,22 @@ export default function CategoryManagement() {
   }, [status, message, dispatch]);
 
   const handleDelete = (id) => {
-    dispatch(deleteCategory(id)).then(() => {
-      dispatch(getAllCategories());
+    // Hiển thị thông báo xác nhận xóa bằng SweetAlert2
+    Swal.fire({
+      title: 'Bạn có chắc chắn muốn xóa danh mục này?',
+      text: "Hành động này không thể hoàn tác!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Chắc chắn',
+      cancelButtonText: 'Hủy'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteCategory(id)).then(() => {
+          dispatch(getAllCategories());
+        });
+      }
     });
   };
 
@@ -42,7 +57,6 @@ export default function CategoryManagement() {
     setNewName(item.name);
   };
 
-
   const handleSave = (id) => {
     dispatch(updateCategory({ categoryId: id, name: newName }));
     setEditCategory({ isEdit: false, id: "" });
@@ -51,34 +65,45 @@ export default function CategoryManagement() {
   // thêm
   const [newCategory, setNewCategory] = useState("");
   const handleAddCategory = () => {
-    if (newCategory.trim() === "") {
-      alert("Tên danh mục không được để trống");
-      return;
-    }
-    dispatch(createCategory({ name: newCategory })).then(() => {
-      setNewCategory(""); 
-      dispatch(getAllCategories());
-    });
+    dispatch(createCategory({ name: newCategory }))
+      .unwrap()
+      .then((response) => {
+        if (response.status === 200) {
+          setNewCategory("");
+          dispatch(getAllCategories());
+        }
+      })
+      .catch((error) => {
+        console.log("Error adding category:", error);
+      });
   };
   return (
     <div>
       <Container>
-        <h1>Total Categories:</h1>
+        <div className='title-page-admin'>
+          <Container>
+            <h1>Category Management</h1>
+          </Container>
+        </div>
         {showMessage && (
-          <Alert color={status === 200 ? "success" : "danger"}>{message}</Alert>
+          <Alert color={status === 200  ? "success" : "danger"}>{message}</Alert>
         )}
         <div className="add-category">
-        <FormGroup>
-          <Input
-            type="text"
-            id="newCategory"
-            placeholder="Nhập tên danh mục"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-          />
-          <Button color="success" onClick={handleAddCategory} className="mt-2">Add category</Button>
-        </FormGroup>
+            <Input
+              type="text"
+              id="newCategory"
+              placeholder="Enter category name"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <Button color="success" onClick={handleAddCategory}>Add category</Button>
         </div>
+        <div className='title-list'>
+            <Container>
+                <h2>Category List</h2>
+            </Container>
+        </div>
+        <div className="table-category">
         <Table hover>
           <thead>
             <tr>
@@ -87,10 +112,11 @@ export default function CategoryManagement() {
               <th>Actions</th>
             </tr>
           </thead>
+          
           <tbody>
             {categories && categories.map((item, index) => (
               <tr key={index} className={editCategory.isEdit && item.id === editCategory.id ? "category-item active" : "category-item"}>
-                <th scope="row">{item.id}</th>
+                <th scope="row">{index + 1}</th>
                 <td>
                   {editCategory.isEdit && item.id === editCategory.id ? (
                     <Input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
@@ -104,11 +130,7 @@ export default function CategoryManagement() {
                   ) : (
                     <div className="function">
                       <Button color="success" onClick={() => handleEdit(item.id, item)}><LuClipboardEdit /></Button>
-                      <Button color="danger" onClick={() => {
-                        if (window.confirm("Bạn có muốn xóa danh mục này?")) {
-                          handleDelete(item.id);
-                        }
-                      }}><FaTrash /></Button>
+                      <Button color="danger" onClick={() => handleDelete(item.id)}><FaTrash /></Button>
                     </div>
                   )}
                 </td>
@@ -116,6 +138,7 @@ export default function CategoryManagement() {
             ))}
           </tbody>
         </Table>
+      </div>
       </Container>
     </div>
   );
