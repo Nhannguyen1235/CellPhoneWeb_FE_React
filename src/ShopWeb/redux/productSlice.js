@@ -135,7 +135,7 @@ const productSlice = createSlice({
                 // let obj = action.payload.data;
                 // console.log(obj)
                 state.categories = action.payload.data;
-                console.log(action.payload.data);
+                // console.log(action.payload.data);
             })
             .addCase(fetchCategories.rejected, (state, action) => {
                 state.status = 'failed';

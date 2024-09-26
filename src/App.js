@@ -15,6 +15,7 @@ import AdminHomePage from './pages/admin/adminHomePage/AdminHomePage';
 import AdminVoucherPage from './pages/admin/adminVoucherPage/AdminVoucherPage';
 import AdminProductPage from './pages/admin/adminProductPage/AdminProductPage';
 import AdminRoute from './ShopWeb/ultil/AdminRoute';
+import AdminUserPage from './pages/admin/adminUserPage/AdminUserPage';
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/admin" element={<AdminRoute><AdminHomePage /></AdminRoute>} />
           <Route path="/admin/product" element={<AdminRoute><AdminProductPage /></AdminRoute>} />
           <Route path="/admin/voucher" element={<AdminRoute><AdminVoucherPage /></AdminRoute>} />
+          <Route path="/admin/user" element={<AdminRoute><AdminUserPage /></AdminRoute>} />
         </Routes>
       </HashRouter>
     </Provider>

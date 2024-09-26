@@ -30,6 +30,10 @@ const SideBar = () => {
             <CDBSidebarMenuItem icon="credit-card" iconType="solid">
               Metrics
             </CDBSidebarMenuItem>
+            <CDBSidebarMenuItem as={Link} to="/admin/user" icon="sticky-note">User Management</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">test</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">test</CDBSidebarMenuItem>
+            <CDBSidebarMenuItem icon="sticky-note">test</CDBSidebarMenuItem>
           </CDBSidebarMenu>
         </CDBSidebarContent>
 
