@@ -1,25 +1,19 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteCart, clearCart, toggleCheckAll, toggleCheck, overwriteCarts } from '../redux/cartSlice';
+import { deleteCart, clearCart, toggleCheckAll, toggleCheck, overwriteCarts, fetchProductImages } from '../redux/cartSlice';
 import { Link } from 'react-router-dom';
 
 export default function Cart() {
     const dispatch = useDispatch();
-    const carts = useSelector((state) => state.carts.carts);
-    const checkAll = useSelector((state) => state.carts.checkAll);
+    const { carts, checkAll, productImages } = useSelector((state) => state.cart);
 
     useEffect(() => {
-        const storedCarts = localStorage.getItem('carts');
-        if (storedCarts) {
-            dispatch(overwriteCarts(JSON.parse(storedCarts)));
-        }
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (carts.length > 0) {
-            localStorage.setItem('carts', JSON.stringify(carts));
-        }
-    }, [carts]);
+        carts.forEach(product => {
+            if (!productImages[product.id]) {
+                dispatch(fetchProductImages(product.id));
+            }
+        });
+    }, [carts, dispatch, productImages]);
 
     const handleDeleteFromCart = (productId) => {
         dispatch(deleteCart(productId));
@@ -83,17 +77,24 @@ export default function Cart() {
                                                 />
                                             </td>
                                             <td>
-                                                <img
-                                                    src={require(`../../imgs/${product.image}.jpg`)}
-                                                    alt={product.name}
-                                                    className="img-thumbnail"
-                                                    style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                                                />
+                                                {productImages[product.id] && productImages[product.id].length > 0 ? (
+                                                    <img
+                                                        src={productImages[product.id][0]}
+                                                        alt={product.name}
+                                                        className="img-thumbnail"
+                                                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                                    />
+                                                ) : (
+                                                    <div 
+                                                        className="img-thumbnail" 
+                                                        style={{ width: '50px', height: '50px', backgroundColor: '#f0f0f0' }}
+                                                    ></div>
+                                                )}
                                             </td>
                                             <td>
                                                 <Link to={`/product/${product.id}`}>{product.name}</Link>
                                             </td>
-                                            <td>{product.category.join(', ')}</td>
+                                            <td>{product.category.name}</td>
                                             <td>${product.price}</td>
                                             <td>{product.quantity}</td>
                                             <td>${(product.price * product.quantity).toFixed(2)}</td>

@@ -33,7 +33,7 @@ export default function Header() {
   }, [dispatch]);
 
   const [collapsed, setCollapsed] = useState(true);
-  const cartCount = useSelector((state) => state.carts.carts.length);
+  const cartCount = useSelector((state) => state.cart.carts.length);
 
   const toggleNavbar = () => setCollapsed(!collapsed);
 

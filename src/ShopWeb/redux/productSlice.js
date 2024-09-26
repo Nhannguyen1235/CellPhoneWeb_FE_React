@@ -10,28 +10,73 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
     return response.data.data;
 });
 
+export const fetchNameImagesProduct = createAsyncThunk(
+    'products/fetchNameImagesProduct',
+    async ({ productId }, { rejectWithValue }) => {
+      try {
+        const response = await axiosInstance.get(`${BaseUrl}/product/image/getAllImageProduct/${productId}`);
+        return response.data.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
+
+  export const fetchImagesProduct = createAsyncThunk(
+    'products/fetchImagesProduct',
+    async ({ imageName, options }, { rejectWithValue }) => {
+      try {
+        const response = await axiosInstance.get(`${BaseUrl}/product/image/images/${imageName}`, options);
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
+
 export const fetchCategories = createAsyncThunk('products/fetchCategories', async () => {
     const response = await axiosInstance.get(`${BaseUrl}/admin/categories`);
     return response.data;
 });
 
-export const addImagesProduct = createAsyncThunk('products/addImagesProduct', async (images, productId) => {
-    const response = await axiosInstance.post(`${BaseUrl}/product/uploads/${productId}`, images);
+export const addImagesProduct = createAsyncThunk('products/addImagesProduct', async ({images, productId}) => {
+    console.log(images)
+    console.log('Product ID:', productId); // Log the product ID for debugging
+
+    const formData = new FormData();
+    images.forEach((image) => {
+        formData.append("files", image);
+    });
+
+    const response = await axiosInstance.post(`${BaseUrl}/product/image/uploads/${productId}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
+    return response.data.data; // Ensure this is the correct path to your needed data
+});
+
+export const deleteProduct = createAsyncThunk('products/deleteProduct', async ({productId}) => {
+    const response = await axiosInstance.delete(`${BaseUrl}/product/admin/delete/${productId}`);
     return response.data.data;
 });
 
-export const deleteImagesProduct = createAsyncThunk('products/deleteImagesProduct', async (images, productId) => {
-    const response = await axiosInstance.post(`${BaseUrl}/product/admin/deleteImages/${productId}`, images);
+export const editProduct = createAsyncThunk('products/editProduct', async ({productId, formData}) => {
+    const response = await axiosInstance.put(`${BaseUrl}/product/admin/edit/${productId}`, formData);
     return response.data.data;
 });
 
-export const addProduct = createAsyncThunk('products/addProduct', async (product, images) => {
-    const response = await axiosInstance.post(`${BaseUrl}/product/admin/add`, product);
-    const productId = response.data.data.id;
-    await addImagesProduct(images, productId);
-
+export const deleteImagesProduct = createAsyncThunk('products/deleteImagesProduct', async ({imageId}) => {
+    const response = await axiosInstance.delete(`${BaseUrl}/product/image/delete/${imageId}`);
     return response.data.data;
 });
+
+export const addProduct = createAsyncThunk('products/addProduct', async (formData) => {
+    const response = await axiosInstance.post(`${BaseUrl}/product/admin/add`, formData)
+    return response.data.data;
+});
+
 
 // Khởi tạo trạng thái ban đầu
 const initialState = {
@@ -42,7 +87,8 @@ const initialState = {
     selectedCategory: 'all', // Danh mục sản phẩm đã chọn
     selectedPrice: 'all',    // Phạm vi giá đã chọn
     searchTerm: '',          // Từ khóa tìm kiếm
-    categories: null
+    categories: null,
+    images: []
 };
 
 // Tạo slice Redux
@@ -138,6 +184,40 @@ const productSlice = createSlice({
                 console.log(action.payload.data);
             })
             .addCase(fetchCategories.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            .addCase(fetchNameImagesProduct.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchNameImagesProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.images = action.payload;
+            })
+            .addCase(fetchNameImagesProduct.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+            .addCase(fetchImagesProduct.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchImagesProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.images = action.payload;
+            })
+            .addCase(fetchImagesProduct.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.error.message;
+            })
+
+            .addCase(deleteImagesProduct.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(deleteImagesProduct.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.images = action.payload;
+            })
+            .addCase(deleteImagesProduct.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.error.message;
             })
