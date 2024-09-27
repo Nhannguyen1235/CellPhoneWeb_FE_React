@@ -12,7 +12,8 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async (thunkAPI) 
     const url = BaseUrl + `/user/getAllUser`;
 
     try{
-        const response = await axiosInstance.get(url);
+        const response = await axiosInstance().get(url);
+        console.log(response.data)
         return response.data;
     }
     catch(error){
@@ -45,7 +46,7 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async (thunkAPI) 
 
 // Khởi tạo trạng thái ban đầu
 const initialState = {
-    users:[],        // Danh sách tất cả các user
+    users:null,        // Danh sách tất cả các user
     status: '',          // Trạng thái của yêu cầu (idle, loading, succeeded, failed)
     message: "",
     error: '',               // Lỗi nếu có khi lấy sản phẩm từ API
@@ -65,14 +66,14 @@ const userSlice = createSlice({
             })
             // Khi lấy sản phẩm từ API thành công
             .addCase(fetchUsers.fulfilled, (state, action) =>{
-                state.status = action.payload.status
-                state.message = action.payload.message
-                state.users = action.payload.data
+                // state.status = action.payload
+                // state.message = action.payload
+                state.users = action.payload
             })
             .addCase(fetchUsers.rejected, (state, action) =>{
-                state.status = action.payload.status
-                state.message = action.payload.message
-                state.error = action.payload.data
+                // state.status = action.payload.data.data.status
+                // state.message = action.payload.data.data.message
+                console.log("loi")
             })
     },
 });

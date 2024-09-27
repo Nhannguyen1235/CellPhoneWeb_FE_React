@@ -30,7 +30,7 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchUsers)
+    dispatch(fetchUsers())
   }, [dispatch]);
 
 //   const addVoucher = (event) => {
