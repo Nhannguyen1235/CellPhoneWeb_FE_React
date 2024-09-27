@@ -77,6 +77,8 @@ const cartSlice = createSlice({
         existingProduct.quantity += 1;
       } else {
         state.carts.push({ ...product, checked: true, quantity: 1 });
+        // Dispatch action fetchProductImages
+        action.asyncDispatch(fetchProductImages(product.id));
       }
     },
     deleteCart(state, action) {
