@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import sliderReducer from './sliderSlice';
 import productReducer from './productSlice';
 import scrollUpReducer from './scrollUpSlice';
-import cartReducer from './cartSlice';
+import cartReducer, { saveCartsMiddleware } from './cartSlice';
 import categoryReducer from './categorySlice';
 import voucherReducer from './voucherSlice';
 export const store = configureStore({
@@ -14,6 +14,8 @@ export const store = configureStore({
     category: categoryReducer,
     voucher: voucherReducer
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(saveCartsMiddleware),
 });
 
 export default store;

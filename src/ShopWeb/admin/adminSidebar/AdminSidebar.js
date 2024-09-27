@@ -10,8 +10,10 @@ import {
 import { CiLogout } from "react-icons/ci";
 import "./AdminSidebar.css"
 import { Link } from 'react-router-dom';
+import { useLogout } from '../../redux/Logout';
 
 const SideBar = () => {
+  const handleLogout = useLogout();
   return (
       <CDBSidebar className='sidebar'>
         <CDBSidebarHeader prefix={<i className="fa fa-bars" />}>Contrast</CDBSidebarHeader>
@@ -34,12 +36,13 @@ const SideBar = () => {
         </CDBSidebarContent>
 
         <CDBSidebarFooter style={{ textAlign: 'center' }}>
-          <div
-            className="sidebar-btn-wrapper"
-            style={{padding: '20px 5px',fontSize:'25px'}}
-          >
-           <CiLogout/> Logout
-          </div>
+        <div
+          className="sidebar-btn-wrapper"
+          style={{padding: '20px 5px', fontSize:'25px', cursor: 'pointer'}}
+          onClick={handleLogout}
+        >
+          <CiLogout/> Logout
+        </div>
         </CDBSidebarFooter>
       </CDBSidebar>
   );

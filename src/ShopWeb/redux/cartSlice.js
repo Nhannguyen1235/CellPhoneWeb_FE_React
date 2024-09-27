@@ -83,7 +83,9 @@ const cartSlice = createSlice({
       const productId = action.payload;
       state.carts = state.carts.filter((item) => item.id !== productId);
       // Xóa hình ảnh của sản phẩm khỏi state
-      delete state.productImages[productId];
+      if (state.productImages[productId]) {
+        delete state.productImages[productId];
+      }
     },
     clearCart(state) {
       state.carts = state.carts.filter((item) => !item.checked);
