@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteCart, clearCart, toggleCheckAll, toggleCheck, overwriteCarts, fetchProductImages } from '../redux/cartSlice';
 import { Link } from 'react-router-dom';
+import { getVoucherByCode } from '../redux/voucherSlice';
+import { Button, FormGroup, Input } from 'reactstrap';
 
 export default function Cart() {
     const dispatch = useDispatch();
     const { carts, checkAll, productImages } = useSelector((state) => state.cart);
+    const { vouchers, status, message } = useSelector((state) => state.voucher);
 
     useEffect(() => {
         carts.forEach(product => {
@@ -37,6 +40,45 @@ export default function Cart() {
         }
         return total;
     }, 0);
+
+    const [voucherCode, setVoucherCode] = useState("");
+    const [discountAmount, setDiscountAmount] = useState(0);
+    const [voucherMessage, setVoucherMessage] = useState("");
+
+    const handleSearchByCode = () => {
+        if (voucherCode.trim()) {
+            dispatch(getVoucherByCode(voucherCode));
+            console.log(vouchers);
+        }
+    };
+
+    useEffect(() => {
+        if (status === 200 && vouchers && vouchers.length > 0) {
+            const voucher = vouchers[0]; // Lấy voucher đầu tiên từ mảng
+            console.log("Voucher:", voucher);
+            const currentDate = new Date();
+            const expirationDate = new Date(voucher.expirationDate);
+            console.log("Ngày hết hạn:", expirationDate);
+    
+            // Reset discount và messages
+            setDiscountAmount(0);
+            setVoucherMessage("");
+    
+            // Kiểm tra tính hợp lệ của voucher
+            if (expirationDate < currentDate) {
+                setVoucherMessage("Voucher đã hết hạn sử dụng.");
+            } else if (!voucher.isActive) {
+                setVoucherMessage("Voucher không hợp lệ.");
+            } else if (totalAmount < voucher.minOrderValue) {
+                setVoucherMessage(`Đơn hàng chưa đạt giá trị tối thiểu: ${voucher.minOrderValue.toFixed(2)} USD.`);
+            } else {
+                setDiscountAmount(voucher.discountAmount);
+                setVoucherMessage(`Áp dụng thành công! Bạn được giảm ${voucher.discountAmount.toFixed(2)} USD.`);
+            }
+        } else if (status !== "" && status !== 200) {
+            setVoucherMessage("Voucher không tồn tại hoặc không hợp lệ.");
+        }
+    }, [vouchers, status, totalAmount]);
 
     return (
         <div className="container">
@@ -116,8 +158,21 @@ export default function Cart() {
                     )}
                 </div>
             </div>
+            <FormGroup className="d-flex align-items-center mb-3">
+                <Input 
+                    type="text" 
+                    placeholder="Nhập mã voucher cần tìm..." 
+                    value={voucherCode} 
+                    onChange={(e) => setVoucherCode(e.target.value)} 
+                />
+                <Button color="primary" onClick={handleSearchByCode} className="ml-2">
+                    Tìm kiếm
+                </Button>
+            </FormGroup>
+            {voucherMessage && <p className="text-danger text-center">{voucherMessage}</p>}
             <div className="text-end mt-4">
-                <h4>Total Amount: ${totalAmount.toFixed(2)}</h4>
+                <h4>Total Amount: ${(totalAmount - discountAmount).toFixed(2)}</h4>
+                {discountAmount > 0 && <h5 className="text-success">Discount Applied: -${discountAmount.toFixed(2)}</h5>}
                 <Link to={"/checkouts"}>
                     <button className='btn btn-primary'>Check out</button>
                 </Link>

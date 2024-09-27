@@ -124,37 +124,16 @@ export default function VoucherManagement() {
     setEditVoucher({ isEdit: false, id: "" });
   };
 
-  // const [voucherCode, setVoucherCode] = useState(""); // Thêm state cho mã voucher
-
-  // const handleSearchByCode = () => {
-  //   if (voucherCode.trim()) {
-  //     dispatch(getVoucherByCode(voucherCode));
-  //   }
-  // };
-
   return (
     <div>
       <Container>
         <div className='title-page-admin'>
-            <Container>
                 <h1>Voucher Management</h1>
-            </Container>
         </div>
         {showMessage && (
           <Alert color={status === 200 ? "success" : "danger"}>{message}</Alert>
         )}
-        {/* <FormGroup className="d-flex align-items-center mb-3">
-          <Input 
-            type="text" 
-            placeholder="Nhập mã voucher cần tìm..." 
-            value={voucherCode} 
-            onChange={(e) => setVoucherCode(e.target.value)} 
-          />
-          <Button color="primary" onClick={handleSearchByCode} className="ml-2">
-            Tìm kiếm
-          </Button>
-        </FormGroup> */}
-        <Button className="btn btn-success mb-5" onClick={toggle}>
+        <Button className="btn btn-success mb-3" onClick={toggle}>
           Tạo mới Voucher
         </Button>
         <div className='title-list'>
