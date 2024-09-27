@@ -9,7 +9,7 @@ export const getAllVouchers = createAsyncThunk("voucher/getAll", async ( thunkAP
   const url = `${BASE_URL}/admin/vouchers`;
   try {
     const response = await axiosInstance.get(url);
-    return response.data.data;
+    return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
   }
@@ -89,7 +89,6 @@ const voucherSlice = createSlice({
         // state.message = action.payload.message;
       })
       .addCase(getAllVouchers.rejected, (state, action) => {
-        state.status = action.payload.status;
         state.message = action.payload.data;
         state.error = action.payload;
       })

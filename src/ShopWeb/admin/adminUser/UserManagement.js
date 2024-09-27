@@ -11,9 +11,9 @@ import {
   ModalFooter,
   ModalHeader,
 } from "reactstrap";
-import axiosInstance from "../../ultil/axiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../../redux/userSlice";
+
 const UserManagement = () => {
   const [modal, setModal] = useState(false);
   const [username, setUsername] = useState("");
@@ -21,37 +21,19 @@ const UserManagement = () => {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const dispatch = useDispatch();
-  const {users} = useSelector((state)=>state.users);
-
-  const BaseUrl = "http://localhost:8080";
-
+  const { users, status, error } = useSelector((state) => {
+    console.log('State in useSelector:', state.users);
+    return state.users;
+  });
   const toggle = () => {
     setModal(!modal);
   };
 
   useEffect(() => {
-    dispatch(fetchUsers())
+    dispatch(fetchUsers());
   }, [dispatch]);
 
-//   const addVoucher = (event) => {
-//     event.preventDefault();
-//     if (voucherName && voucherPrice) {
-//       setVouchers([
-//         ...vouchers,
-//         {
-//           name: voucherName,
-//           price: voucherPrice,
-//           category: voucherCategory,
-//           expiredDate: voucherExpiredDate,
-//         },
-//       ]);
-//     //   setVoucherName("");
-//     //   setVoucherPrice("");
-//     //   setVoucherCategory("");
-//     //   setVoucherExpiredDate("");
-//       toggle();
-//     }
-//   };
+  console.log('Component re-render. Users:', users);
 
   return (
     <div className="mt-4 p-4">
@@ -122,30 +104,41 @@ const UserManagement = () => {
       </Modal>
 
       <h3>User List</h3>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>username</th>
-            <th>email</th>
-            <th>address</th>
-            <th>phoneNUmber</th>
-            <th>isActive</th>
-            <th>tole</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users && users.map((user, index) => (
-            <tr key={index}>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>
-                <button className="btn btn-primary">Edit</button>
-                <button className="btn btn-danger">Delete</button>
-              </td>
+      {status === 'loading' && <p>Loading users...</p>}
+      {status === 'failed' && <p>Error: {error}</p>}
+      {status === 'succeeded' && users && users.length > 0 ? (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Phone Number</th>
+              <th>Is Active</th>
+              <th>Role</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.username}</td>
+                <td>{user.email}</td>
+                <td>{user.address || 'N/A'}</td>
+                <td>{user.phoneNumber || 'N/A'}</td>
+                <td>{user.isActive ? 'Yes' : 'No'}</td>
+                <td>{user.role}</td>
+                <td>
+                  <button className="btn btn-primary mr-2">Edit</button>
+                  <button className="btn btn-danger">Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No users found</p>
+      )}
     </div>
   );
 };
