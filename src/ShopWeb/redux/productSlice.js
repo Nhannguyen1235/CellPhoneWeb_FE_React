@@ -6,7 +6,7 @@ const BaseUrl = 'http://localhost:8080/api/v1';
 
 // Lấy danh sách sản phẩm từ API
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-    const response = await axios.get(`${BaseUrl}/product/getAll`);
+    const response = await axiosInstance.get(`${BaseUrl}/product/getAll`);
     return response.data.data;
 });
 

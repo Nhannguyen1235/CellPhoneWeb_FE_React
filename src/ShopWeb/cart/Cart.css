@@ -1,0 +1,10 @@
+.add-category input{
+    display: block;
+    padding: 10px !important;
+    width: 70%;
+    border-radius: 10px 0px 0px 10px;
+}
+.add-category button{
+    padding: 10px !important;
+    border-radius: 0px 10px 10px 0px;
+}

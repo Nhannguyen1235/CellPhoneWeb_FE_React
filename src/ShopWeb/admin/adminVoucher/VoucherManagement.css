@@ -4,6 +4,11 @@
     display: flex;
     align-items: center;
 }
+.css_checkbox input{
+    width: 10px;
+    height: 10px;
+    padding: 10px !important;
+}
 .css_checkbox_model{
     display: flex;
     justify-content: center;

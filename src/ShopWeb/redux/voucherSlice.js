@@ -5,11 +5,11 @@ import axiosInstance from "../ultil/axiosInstance";
 const BASE_URL = "http://localhost:8080/api/v1";
 
 
-export const getAllVouchers = createAsyncThunk("voucher/getAll", async (_, thunkAPI) => {
+export const getAllVouchers = createAsyncThunk("voucher/getAll", async ( thunkAPI) => {
   const url = `${BASE_URL}/admin/vouchers`;
   try {
     const response = await axiosInstance.get(url);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
   }
