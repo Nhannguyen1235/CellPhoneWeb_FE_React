@@ -1,128 +1,187 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, setCategory, setPrice, setSearchTerm } from "../redux/productSlice";
+import {
+  setCategory,
+  setPrice,
+  setSearchTerm,
+  setBrand,
+  fetchNameImagesProduct,
+  fetchImagesProduct,
+} from "../redux/productSlice";
 import AOS from "aos";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { addCart, overwriteCarts } from "../redux/cartSlice";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 import "./ProductList.css";
 
 export default function ProductList() {
-  const dispatch = useDispatch(); // Sử dụng hook useDispatch để dispatch các action
-  const navigate = useNavigate(); // Sử dụng hook useNavigate để điều hướng URL
-  const carts = useSelector((state) => state.carts.carts); // Lấy thông tin giỏ hàng từ Redux store
-  const { category, price, search, brand } = useParams(); // Lấy thông tin từ URL params
-  const products = useSelector((state) => state.products.filteredProducts); // Lấy danh sách sản phẩm đã lọc từ Redux store
-  const status = useSelector((state) => state.products.status); // Lấy trạng thái của fetch sản phẩm
-  const error = useSelector((state) => state.products.error); // Lấy thông tin lỗi nếu có
-  const selectedCategory = useSelector((state) => state.products.selectedCategory); // Lấy danh mục đã chọn
-  const selectedPrice = useSelector((state) => state.products.selectedPrice); // Lấy mức giá đã chọn
-  const selectedBrand = useSelector((state) => state.products.selectedBrand); // Lấy mức giá đã chọn
-  const searchTerm = useSelector((state) => state.products.searchTerm); // Lấy từ khóa tìm kiếm
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const carts = useSelector((state) => state.cart.carts);
+  const [productImageMap, setProductImageMap] = useState({});
+  const { category, price, search, brand } = useParams();
+  const products = useSelector((state) => state.products.filteredProducts);
+  const status = useSelector((state) => state.products.status);
+  const error = useSelector((state) => state.products.error);
+  const selectedCategory = useSelector(
+    (state) => state.products.selectedCategory
+  );
+  const selectedPrice = useSelector((state) => state.products.selectedPrice);
+  const selectedBrand = useSelector((state) => state.products.selectedBrand);
+  const searchTerm = useSelector((state) => state.products.searchTerm);
 
-  const [currentPage, setCurrentPage] = useState(1); // State để quản lý trang hiện tại của phân trang
-  const itemsPerPage = 9; // Số sản phẩm hiển thị mỗi trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
   useEffect(() => {
-    AOS.init(); // Khởi tạo AOS cho hiệu ứng cuộn
+    AOS.init();
   }, []);
 
   useEffect(() => {
-    const storedCarts = localStorage.getItem("carts"); // Lấy giỏ hàng từ localStorage
+    const storedCarts = localStorage.getItem("carts");
     if (storedCarts) {
-      dispatch(overwriteCarts(JSON.parse(storedCarts))); // Cập nhật giỏ hàng từ localStorage vào Redux store
+      dispatch(overwriteCarts(JSON.parse(storedCarts)));
     }
   }, [dispatch]);
 
   useEffect(() => {
+    products.forEach((product) => {
+      if (!productImageMap[product.id]) {
+        handleFetchImages(product.id);
+      }
+    });
+  }, [products, productImageMap]);
+
+  useEffect(() => {
     if (carts.length > 0) {
-      localStorage.setItem('carts', JSON.stringify(carts)); // Lưu giỏ hàng vào localStorage khi giỏ hàng thay đổi
+      localStorage.setItem("carts", JSON.stringify(carts));
     }
   }, [carts]);
 
   const handleAddToCart = (product) => {
-    dispatch(addCart(product)); // Dispatch action thêm sản phẩm vào giỏ hàng
+    dispatch(addCart(product));
     Swal.fire({
       title: "Great!",
       text: "Added to cart successfully!",
-      icon: "success"
-    }); // Hiển thị thông báo thành công
+      icon: "success",
+    });
   };
 
   useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchProducts()); // Fetch danh sách sản phẩm nếu trạng thái là "idle"
+    dispatch(handleFetchImages());
+  }, [dispatch]);
+
+  const handleFetchImages = async (productId) => {
+    try {
+      const imageNames = await dispatch(
+        fetchNameImagesProduct({ productId })
+      ).unwrap();
+      const imageUrls = await Promise.all(
+        imageNames.map(async (image) => {
+          const response = await dispatch(
+            fetchImagesProduct({
+              imageName: image.imageUrl,
+              options: { responseType: "blob" },
+            })
+          ).unwrap();
+
+          if (response instanceof Blob) {
+            return URL.createObjectURL(response);
+          } else {
+            console.error("Phản hồi không phải là Blob:", response);
+            return null;
+          }
+        })
+      );
+
+      const validImageUrls = imageUrls.filter((url) => url !== null);
+      setProductImageMap((prevState) => ({
+        ...prevState,
+        [productId]: validImageUrls,
+      }));
+    } catch (error) {
+      console.error("Lỗi khi tải ảnh cho sản phẩm:", productId, error);
     }
-  }, [status, dispatch]);
+  };
 
   useEffect(() => {
     if (category) {
-      dispatch(setCategory(category.toLowerCase())); // Cập nhật danh mục đã chọn
+      dispatch(setCategory(category.toLowerCase()));
     }
     if (price) {
-      dispatch(setPrice(price.toLowerCase())); // Cập nhật mức giá đã chọn
+      dispatch(setPrice(price.toLowerCase()));
     }
     if (search) {
-      dispatch(setSearchTerm(search.toLowerCase())); // Cập nhật từ khóa tìm kiếm
+      dispatch(setSearchTerm(search.toLowerCase()));
     }
     if (brand) {
-      dispatch(setCategory(brand.toLowerCase())); // Cập nhật danh mục đã chọn
+      dispatch(setBrand(brand.toLowerCase()));
     }
   }, [category, price, search, brand, dispatch]);
 
   const handleCategoryChange = (event) => {
-    const selectedCategory = event.target.value.toLowerCase(); // Lấy giá trị danh mục đã chọn
-    dispatch(setCategory(selectedCategory)); // Dispatch action cập nhật danh mục
-    updateURL(selectedCategory, selectedPrice, searchTerm); // Cập nhật URL
+    const selectedCategory = event.target.value.toLowerCase();
+    dispatch(setCategory(selectedCategory));
+    updateURL(selectedCategory, selectedPrice, selectedBrand, searchTerm);
   };
 
   const handleBrandChange = (event) => {
-    const selectedBrand = event.target.value.toLowerCase(); // Lấy giá trị danh mục đã chọn
-    dispatch(setCategory(selectedBrand)); // Dispatch action cập nhật danh mục
-    updateURL(selectedCategory, selectedPrice, searchTerm); // Cập nhật URL
+    const selectedBrand = event.target.value.toLowerCase();
+    dispatch(setBrand(selectedBrand));
+    updateURL(selectedCategory, selectedPrice, selectedBrand, searchTerm);
   };
 
   const handlePriceChange = (event) => {
-    const selectedPrice = event.target.value.toLowerCase(); // Lấy giá trị mức giá đã chọn
-    dispatch(setPrice(selectedPrice)); // Dispatch action cập nhật mức giá
-    updateURL(selectedCategory, selectedPrice, searchTerm); // Cập nhật URL
+    const selectedPrice = event.target.value.toLowerCase();
+    dispatch(setPrice(selectedPrice));
+    updateURL(selectedCategory, selectedPrice, selectedBrand, searchTerm);
   };
 
   const handleSearchChange = (event) => {
-    const newSearchText = event.target.value.toLowerCase(); // Lấy giá trị từ khóa tìm kiếm
-    dispatch(setSearchTerm(newSearchText)); // Dispatch action cập nhật từ khóa tìm kiếm
-    updateURL(selectedCategory, selectedPrice, newSearchText); // Cập nhật URL
+    const newSearchText = event.target.value.toLowerCase();
+    dispatch(setSearchTerm(newSearchText));
+    updateURL(selectedCategory, selectedPrice, selectedBrand, newSearchText);
   };
 
-  const updateURL = (category, price, search) => {
+  const updateURL = (category, price, brand, search) => {
     const basePath = `/products`;
-    const categoryPath = category && category !== "all" ? `/${category}` : "/all";
+    const categoryPath =
+      category && category !== "all" ? `/${category}` : "/all";
     const pricePath = price && price !== "all" ? `/${price}` : "/all";
+    const brandPath = brand && brand !== "all" ? `/${brand}` : "/all";
     const searchPath = search ? `/${search}` : "";
 
-    navigate(`${basePath}${categoryPath}${pricePath}${searchPath}`); // Điều hướng tới URL mới
+    navigate(`${basePath}${categoryPath}${pricePath}${brandPath}${searchPath}`);
   };
 
   const handlePageChange = (event, page) => {
-    setCurrentPage(page); // Cập nhật trang hiện tại khi phân trang thay đổi
+    setCurrentPage(page);
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage; // Tính chỉ mục bắt đầu của sản phẩm trên trang hiện tại
-  const currentProducts = products.slice(startIndex, startIndex + itemsPerPage); // Lấy danh sách sản phẩm trên trang hiện tại
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
 
   if (status === "loading") {
-    return <div className="text-center">Loading...</div>; // Hiển thị trạng thái loading khi đang fetch sản phẩm
+    return <div className="text-center">Loading...</div>;
   }
 
   if (status === "failed") {
-    return <div className="text-center text-danger">Error: {error}</div>; // Hiển thị lỗi nếu fetch sản phẩm thất bại
+    return <div className="text-center text-danger">Error: {error}</div>;
   }
 
-  const categories = ["All", "Men", "Women", "Hoodie", "Hat", "Vest", "Bag"]; // Danh sách các danh mục
+  const categories = ["All", "Men", "Women", "Hoodie", "Hat", "Vest", "Bag"];
   const priceRanges = ["All", "Under $50", "$50 - $100", "Above $100"];
-  const brands = ["All", "Nike", "Adidas", "Puma", "Reebok", "Converse", "Vans"]; // Danh sách các mức giá
+  const brands = [
+    "All",
+    "Nike",
+    "Adidas",
+    "Puma",
+    "Reebok",
+    "Converse",
+    "Vans",
+  ];
 
   return (
     <div className="container">
@@ -187,54 +246,45 @@ export default function ProductList() {
         <div className="col-md-9">
           <h2 className="text-center my-4">Product List</h2>
           <div className="row">
-            {currentProducts.map((product) => {
-              const productImage = require(`../../imgs/${product.image}.jpg`); // Lấy hình ảnh sản phẩm
-              return (
-                <div key={product.id} className="col-md-6 col-lg-4 mb-4">
-                  <div className="card h-100" data-aos="zoom-in-up">
-                    <Link to={`/product/${product.id}`}>
-                      <img
-                        src={productImage}
-                        className="card-img-top"
-                        alt={product.name}
-                      />
-                    </Link>
-                    <div className="card-body">
-                      <div className="card-content">
-                        <h5 className="card-name">{product.name}</h5>
-                        <p className="card-text">Price: ${product.price}</p>
-                        <p className="card-text">
-                          Category:{" "}
-                          {product.category.map((cat, index) => (
-                            <span key={index}>
-                              <Link
-                                to={`/products/${cat.toLowerCase()}`}
-                                className="category-link"
-                              >
-                                {cat}
-                              </Link>
-                              {index < product.category.length - 1 && ", "}
-                            </span>
-                          ))}
-                        </p>
-                      </div>
-                      <Link
-                        to={`/product/${product.id}`}
-                        className="btn btn-view btn-outline-dark"
-                      >
-                        View Details
-                      </Link>
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        className="btn btn-view btn-outline-dark"
-                      >
-                        Add To Cart
-                      </button>
+            {currentProducts.map((product) => (
+              <div key={product.id} className="col-md-6 col-lg-4 mb-4">
+                <div className="card h-100" data-aos="zoom-in-up">
+                  <Link to={`/product/${product.id}`}>
+                    <img
+                      src={
+                        productImageMap[product.id] &&
+                        productImageMap[product.id].length > 0
+                          ? productImageMap[product.id][0]
+                          : "placeholder-image-url"
+                      } // Thay 'placeholder-image-url' bằng URL của ảnh mặc định
+                      className="card-img-top"
+                      alt={product.name}
+                    />
+                  </Link>
+                  <div className="card-body">
+                    <div className="card-content">
+                      <h5 className="card-name">{product.name}</h5>
+                      <p className="card-text">Price: ${product.price}</p>
+                      <p className="card-text">
+                        Category: {product.category.name}
+                      </p>
                     </div>
+                    <Link
+                      to={`/product/${product.id}`}
+                      className="btn btn-view btn-outline-dark"
+                    >
+                      View Details
+                    </Link>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="btn btn-view btn-outline-dark"
+                    >
+                      Add To Cart
+                    </button>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
           <div className="d-flex justify-content-center mt-4">
             <Stack spacing={2}>

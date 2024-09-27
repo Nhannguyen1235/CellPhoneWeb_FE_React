@@ -12,9 +12,9 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async (thunkAPI) 
     const url = BaseUrl + `/user/getAllUser`;
 
     try{
-        const response = await axiosInstance().get(url);
+        const response = await axiosInstance.get(url);
         console.log(response.data)
-        return response.data;
+        return response.data.data;
     }
     catch(error){
         return thunkAPI.rejectWithValue(error.respone.data)
