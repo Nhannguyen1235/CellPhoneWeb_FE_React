@@ -65,7 +65,6 @@ export default function ProductSlider() {
           }
         })
       );
-
       const validImageUrls = imageUrls.filter((url) => url !== null);
       setProductImageMap((prevState) => ({
         ...prevState,
