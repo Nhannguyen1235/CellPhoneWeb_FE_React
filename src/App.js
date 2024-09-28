@@ -36,7 +36,6 @@ export default function App() {
           <Route path="/products/:price" element={<ProductsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<HomePage />} />
-
           {/* Routes admin */}
           <Route path="/admin" element={<AdminRoute><AdminHomePage /></AdminRoute>} />
           <Route path="/admin/product" element={<AdminRoute><AdminProductPage /></AdminRoute>} />
