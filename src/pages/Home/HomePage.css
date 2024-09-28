@@ -35,6 +35,7 @@
   background-image: url(../../imgs/oneplus-11-review-cnet-lanxon-promo-8.webp);
   background-position: center center;
   background-size: cover;
+  height: 500px;
   background-attachment: fixed;
 }
 .bg-overlay {
@@ -47,6 +48,15 @@
   width: 100%;
   height: 100%;
 }
+ .bg-conten{
+  padding-top: 150px;
+  margin: 0 auto;
+ }
+
+ .section-title{
+  padding-bottom: 20px;
+ }
+
 
 .box {
   width: 100px;
@@ -79,3 +89,251 @@
   position: relative;
 }
 
+
+.entertainment-section {
+  background-image: url('../../imgs/oneplus-11-review-cnet-lanxon-promo-8.webp');
+  background-size: cover;
+  background-position: center;
+  padding: 80px 0;
+  position: relative;
+  color: white;
+}
+
+.entertainment-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.entertainment-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.feature-card {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  color: black;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.feature-number {
+  width: 40px;
+  height: 40px;
+  background: black;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-weight: bold;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  margin-bottom: 20px;
+}
+
+.btn-dark {
+  background: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.btn-dark:hover {
+  background: #333;
+}
+
+.innovative-features {
+  padding: 80px 0;
+  background-color: #f8f9fa;
+}
+
+.innovative-features .section-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.innovative-features .section-subtitle {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #6c757d;
+  margin-bottom: 50px;
+}
+
+.features-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feature-column {
+  flex: 1;
+  max-width: 30%;
+}
+
+.center-image {
+  flex: 1;
+  text-align: center;
+  max-width: 40%;
+}
+
+.center-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.feature {
+  margin-bottom: 30px;
+}
+
+.feature h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.left-features {
+  text-align: right;
+}
+
+.right-features {
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .features-container {
+    flex-direction: column;
+  }
+
+  .feature-column, .center-image {
+    max-width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .left-features, .right-features {
+    text-align: center;
+  }
+}
+
+
+.product-gallery {
+  padding: 0;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  height: 350px;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+.main-item {
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover .overlay {
+  opacity: 1;
+}
+
+.overlay-content {
+  text-align: left;
+  color: white;
+  padding: 20px;
+}
+
+.overlay-content h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.overlay-content h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.btn-view {
+  background: white;
+  color: black;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.btn-view:hover {
+  background: black;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .main-item {
+    height: 300px;
+  }
+  
+  .gallery-item {
+    height: 150px;
+  }
+}

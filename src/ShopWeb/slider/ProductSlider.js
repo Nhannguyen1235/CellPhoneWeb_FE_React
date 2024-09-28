@@ -126,78 +126,71 @@ export default function ProductSlider() {
           1200: { slidesPerView: 4, spaceBetween: 10 },
         }}
       >
-        {firstFiveProducts.map((product, index) => (
-          <SwiperSlide key={index}>
-            <div key={product.id} className="">
-              <div className="card h-100" data-aos="zoom-in-up">
-                <Link to={`/product/${product.id}`}>
-                  {Array.isArray(productImageMap[product.id]) &&
-                  productImageMap[product.id].length > 0 ? (
-                    <img
-                      src={productImageMap[product.id][0]}
-                      className="card-img-top"
-                      alt={product.name}
-                      onError={(e) => {
-                        console.error(
-                          `Lỗi khi tải ảnh: ${productImageMap[product.id][0]}`
-                        );
-                        e.target.src = "đường_dẫn_đến_ảnh_mặc_định";
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src="đường_dẫn_đến_ảnh_mặc_định"
-                      className="card-img-top"
-                      alt={product.name}
-                    />
-                  )}
-                </Link>
-                <div className="card-body">
-                  <div className="card-content">
-                    <h5 className="card-name-slider">{product.name}</h5>
-                    <p className="card-text">Price: ${product.price}</p>
-                    <p className="card-text">
-                      Category:{" "}
-                      {product.category ? (
-                        <span>
-                          <Link
-                            to={`/products/${product.category.name.toLowerCase()}`}
-                            className="category-link"
-                          >
-                            {product.category.name}
-                          </Link>
-                        </span>
-                      ) : (
-                        "Không có danh mục"
-                      )}
-                    </p>
-                  </div>
-                  <Link
-                    to={`/product/${product.id}`}
-                    className="btn btn-view btn-outline-dark"
-                  >
-                    View Details
-                  </Link>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="btn btn-view btn-outline-dark"
-                  >
-                    Add To Cart
-                  </button>
-                </div>
-              </div>
+         {firstFiveProducts.map((product, index) => (
+        <SwiperSlide key={index}>
+          <div className="product-card">
+            <div className="product-image">
+              <Link to={`/product/${product.id}`}>
+                {Array.isArray(productImageMap[product.id]) &&
+                productImageMap[product.id].length > 0 ? (
+                  <img
+                    src={productImageMap[product.id][0]}
+                    alt={product.name}
+                    onError={(e) => {
+                      console.error(
+                        `Lỗi khi tải ảnh: ${productImageMap[product.id][0]}`
+                      );
+                      e.target.src = "đường_dẫn_đến_ảnh_mặc_định";
+                    }}
+                  />
+                ) : (
+                  <img
+                    src="đường_dẫn_đến_ảnh_mặc_định"
+                    alt={product.name}
+                  />
+                )}
+              </Link>
+              <button
+                onClick={() => handleAddToCart(product)}
+                className="add-to-cart-btn"
+              >
+                Thêm vào giỏ
+              </button>
             </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <div className="button justify-content-between mt-3">
-        <button className="prev-button" onClick={handlePrev}>
-          {"<"}
-        </button>
-        <button className="next-button" onClick={handleNext}>
-          {">"}
-        </button>
-      </div>
+            <div className="product-info">
+              <h3 className="product-name">{product.name}</h3>
+              <p className="product-price">${product.price.toFixed(2)}</p>
+              <p className="product-category">
+                {product.category ? (
+                  <Link
+                    to={`/products/${product.category.name.toLowerCase()}`}
+                    className="category-link"
+                  >
+                    {product.category.name}
+                  </Link>
+                ) : (
+                  "Không có danh mục"
+                )}
+              </p>
+              <Link
+                to={`/product/${product.id}`}
+                className="view-details-btn"
+              >
+                Xem chi tiết
+              </Link>
+            </div>
+          </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+    <div className="slider-navigation">
+      <button className="prev-button" onClick={handlePrev}>
+        <i className="fas fa-chevron-left"></i>
+      </button>
+      <button className="next-button" onClick={handleNext}>
+        <i className="fas fa-chevron-right"></i>
+      </button>
     </div>
+  </div>
   );
 }

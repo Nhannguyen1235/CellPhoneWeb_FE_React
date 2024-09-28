@@ -10,8 +10,14 @@ import SBC_men from "../../imgs/SBC_men.png";
 import SBC_women from "../../imgs/SBC_women.png";
 import Free_shiping from "../../imgs/free-deliver-icon.webp";
 import Offer from "../../imgs/offers-icon.webp";
+import centerImg from "../../imgs/center-img.webp";
 import Support from "../../imgs/support-icon.webp";
 import Camera from "../../imgs/camera.webp";
+import gal1 from "../../imgs/gal1.webp";
+import gal2 from "../../imgs/gal2.webp";
+import gal3 from "../../imgs/gal3.webp";
+import gal4 from "../../imgs/gal4.webp";
+import gal5 from "../../imgs/gal5.webp";
 import { GiPoloShirt } from "react-icons/gi";
 import Slider from "../../ShopWeb/slider/BannerSlider";
 import BrandSlider from "../../ShopWeb/slider/BrandSlider";
@@ -37,10 +43,10 @@ export default function HomePage() {
                   <img src={Free_shiping}></img>
                 </div>
                 <div className="text-provider p-3">
-                <div className="text-provider-title">
-                <h3>Free Shipping</h3>
-                </div>
-                <p>For orders over $50</p>
+                  <div className="text-provider-title">
+                    <h3>Free Shipping</h3>
+                  </div>
+                  <p>For orders over $50</p>
                 </div>
               </div>
             </div>
@@ -50,10 +56,10 @@ export default function HomePage() {
                   <img src={Offer}></img>
                 </div>
                 <div className="text-provider p-3">
-                <div className="text-provider-title">
-                <h3>Official Discounts</h3>
-                </div>
-                <p>Save Big on next product</p>
+                  <div className="text-provider-title">
+                    <h3>Official Discounts</h3>
+                  </div>
+                  <p>Save Big on next product</p>
                 </div>
               </div>
             </div>
@@ -64,9 +70,9 @@ export default function HomePage() {
                 </div>
                 <div className="text-provider p-3">
                   <div className="text-provider-title">
-                <h3>24/7 Helpline</h3>
+                    <h3>24/7 Helpline</h3>
                   </div>
-                <p>Care till the end</p>
+                  <p>Care till the end</p>
                 </div>
               </div>
             </div>
@@ -74,17 +80,16 @@ export default function HomePage() {
         </div>
       </section>
       <section className="section bg-funfact position-relative">
-            <div className="bg-overlay"></div>
-            <div className="container position-relative text-center">
-                <div className="section-title p-5">
-                    <h3 className="text-white">JENNIFER F., CASPER CUSTOMER</h3>
-                    <h1 className="text-white">"Unbeatable price, and it’s super comfortable"</h1>
-                </div>
-                <div className="section-btn pb-5">
-                <a href="/#" className="btn btn-secondary">View More</a>
-                </div>
-                
-            </div>
+        <div className="bg-overlay"></div>
+        <div className="container bg-conten position-relative text-center">
+          <div className="section-title">
+            <h3 className="text-white">JENNIFER F., CASPER CUSTOMER</h3>
+            <h1 className="text-white">"Unbeatable price, and it’s super comfortable"</h1>
+          </div>
+          <div className="section-btn pb-5">
+            <a href="/#" className="btn btn-secondary">View More</a>
+          </div>
+        </div>
       </section>
       <section className="product-features p-4">
         <div className="container">
@@ -103,6 +108,151 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <section className="entertainment-section">
+        <div className="container">
+          <h2 className="section-title">LOSE YOURSELF IN ENTERTAINMENT</h2>
+          <p className="section-subtitle">SPEND LESS ENJOY MORE</p>
+          
+          <div className="row">
+            <div className="col-md-4">
+              <div className="feature-card">
+                <div className="feature-number">1</div>
+                <h3>TRIPLE CAMERA</h3>
+                <p>Duis at tellus at urna condimentum mattis pellentesque id nibh. Elit scelerisque mauris pellentesque pulvinar. Nunc aliquet bibendum enim facilisis gravida.</p>
+                <button className="btn btn-dark">View More</button>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="feature-card">
+                <div className="feature-number">2</div>
+                <h3>ULTRA GAME MODE</h3>
+                <p>Urna et pharetra pharetra massa massa ultricies mi. Scelerisque varius morbi enim nunc faucibus a pellentesque. Purus sit amet volutpat consequat mauris.</p>
+                <button className="btn btn-dark">View More</button>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="feature-card">
+                <div className="feature-number">3</div>
+                <h3>SUPER AMOLED DISPLAY</h3>
+                <p>Urna neque viverra justo nec ultrices dui sapien eget mi. Sed elementum tempus egestas sed sed risus pretium quam vulputate. Neque sodales ut etiam.</p>
+                <button className="btn btn-dark">View More</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="innovative-features">
+        <div className="container">
+          <h2 className="section-title">INNOVATIVE QUALITIES & FEATURES</h2>
+          <p className="section-subtitle">SHOW YOURS TO THE WORLD</p>
+          
+          <div className="features-container">
+            <div className="feature-column left-features">
+              <div className="feature">
+                <h3>INTELLIGENT PROCESSOR</h3>
+                <p>Tellus in hac habitasse platea dictumst vestibulum rhoncus srd mana erti geueri</p>
+              </div>
+              <div className="feature">
+                <h3>HD SURROUND AUDIO</h3>
+                <p>Sagittis eu volutpat odio ante ut diam quam metus dictfacilisis mauris sit am.</p>
+              </div>
+              <div className="feature">
+                <h3>STYLISH BEVEL EDGES</h3>
+                <p>Dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid</p>
+              </div>
+            </div>
+            
+            <div className="center-image">
+              <img src={centerImg} alt="Delta Magnum X" />
+            </div>
+            
+            <div className="feature-column right-features">
+              <div className="feature">
+                <h3>4.0 WIFI SPECS</h3>
+                <p>Commodo nulla facilisi nullam vehicula ipsum a arcu sagitis ipsum sed iacus.</p>
+              </div>
+              <div className="feature">
+                <h3>MULIT TASKING & THREADING</h3>
+                <p>Amet consectetur adipiscing velit laoreet nega id elit pellentesque habitant morbi .</p>
+              </div>
+              <div className="feature">
+                <h3>CLOUD STORAGE</h3>
+                <p>Dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididun</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="product-gallery">
+  <div className="container-fluid">
+    <div className="row">
+      <div className="col-md-6 p-0">
+        <div className="gallery-item main-item">
+          <img src={gal1} alt="Product 1" />
+          <div className="overlay">
+            <div className="overlay-content">
+              <h3>CURVED CERAMIC BODY</h3>
+              <h2>EXTREMELY THIN AND LIGHT</h2>
+              <Link to="/products" className="btn btn-view">View More</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="col-md-6 p-0">
+        <div className="row m-0">
+          <div className="col-6 p-0">
+            <div className="gallery-item">
+              <img src={gal2} alt="Product 2" />
+              <div className="overlay">
+            <div className="overlay-content">
+              <h3>CRYSTAL POLYCARBONATE</h3>
+              <h2>PRECISE CUT-OUTS</h2>
+              <Link to="/products" className="btn btn-view">View More</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-6 p-0">
+            <div className="gallery-item">
+              <img src={gal3} alt="Product 3" />
+              <div className="overlay">
+            <div className="overlay-content">
+              <h3>BEAUTIFUL FINISH</h3>
+              <h2>SEVEN LAYER COLOR</h2>
+              <Link to="/products" className="btn btn-view">View More</Link>
+            </div>
+          </div>
+            </div>
+          </div>
+          <div className="col-6 p-0">
+            <div className="gallery-item">
+              <img src={gal4} alt="Product 4" />
+              <div className="overlay">
+            <div className="overlay-content">
+              <h3>HIGH SPEED</h3>
+              <h2>POWER OF ANDROID</h2>
+              <Link to="/products" className="btn btn-view">View More</Link>
+            </div>
+          </div>
+            </div>
+          </div>
+          <div className="col-6 p-0">
+            <div className="gallery-item">
+              <img src={gal5} alt="Product 5" />
+              <div className="overlay">
+            <div className="overlay-content">
+              <h3>CURVED CERAMIC BODY</h3>
+              <h2>EXTREMELY THIN AND LIGHT</h2>
+              <Link to="/products" className="btn btn-view">View More</Link>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
       <section className="productSlider text-center">
         <h1>New Arrival</h1>
         <ProductSlider />

@@ -30,20 +30,19 @@ const ProductManagement = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [modal, setModal] = useState(false);
   const [productName, setProductName] = useState("");
-  
+
   const [editingProduct, setEditingProduct] = useState(null);
   const [productDescription, setProductDescription] = useState("");
   const [productImages, setProductImages] = useState([]);
   const [currentProductId, setCurrentProductId] = useState(null)
-  const [localImages, setLocalImages] = useState([]);
-  const [serverImages, setServerImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
   const [productQuantity, setProductQuantity] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [editFormData, setEditFormData] = useState({
-    name: "",
+    productName: "",
     price: "",
     categoryId: "",
-    description: "",
+    productDescription: "",
     quantityInStock: "",
   });
   const [productCategory, setProductCategory] = useState("");
@@ -177,30 +176,38 @@ const ProductManagement = () => {
 
   const handleEditClick = async (product) => {
     setEditingProduct(product);
+    await dispatch(fetchCategories()).unwrap();
+    console.log(product)
     setEditFormData({
       productName: product.name,
       price: product.price,
-      category: product.category.id,
+      categoryId: product.category.id,
       productDescription: product.description,
       quantityInStock: product.quantityInStock,
     });
+    console.log(product.category.id)
 
     const imageNames = await dispatch(
       fetchNameImagesProduct({ productId: product.id })
     ).unwrap();
     const imageUrls = await Promise.all(
       imageNames.map(async (image) => {
-        const response = await dispatch(
-          fetchImagesProduct({ imageName: image.imageUrl })
-        ).unwrap();
-        return { id: image.id, url: URL.createObjectURL(response) };
+        if (image.imageUrl.startsWith('http') || image.imageUrl.startsWith('data:')) {
+          // Nếu imageUrl đã là một URL hoặc data URL, sử dụng nó trực tiếp
+          return { id: image.id, url: image.imageUrl };
+        } else {
+          // Nếu không, fetch ảnh và tạo object URL
+          const response = await dispatch(
+            fetchImagesProduct({ imageName: image.imageUrl })
+          ).unwrap();
+          return { id: image.id, url: URL.createObjectURL(response) };
+        }
       })
     );
     setProductImages(imageUrls);
 
     toggleEdit();
   };
-
   const handleEditInputChange = (e) => {
     const { name, value } = e.target;
     setEditFormData((prev) => ({ ...prev, [name]: value }));
@@ -208,8 +215,14 @@ const ProductManagement = () => {
 
   const handleImageDelete = async (imageId) => {
     try {
-      await dispatch(deleteImagesProduct({ imageId })).unwrap();
-      setProductImages((prev) => prev.filter((img) => img.id !== imageId));
+      if (imageId.startsWith('new-')) {
+        setNewImages(prevImages => prevImages.filter(img => `new-${img.name}` !== imageId));
+        setProductImages(prevImages => prevImages.filter(img => img.id !== imageId));
+      }
+      else {
+        await dispatch(deleteImagesProduct({ imageId })).unwrap();
+        setProductImages((prev) => prev.filter((img) => img.id !== imageId));
+      }
     } catch (error) {
       console.error("Lỗi khi xóa ảnh:", error);
     }
@@ -223,11 +236,25 @@ const ProductManagement = () => {
         formData.append(key, editFormData[key])
       );
 
+      // Thêm ảnh mới vào formData
+      newImages.forEach((image) => {
+        formData.append("files", image);
+      });
+
       await dispatch(
         editProduct({ productId: editingProduct.id, formData })
       ).unwrap();
+
+      // Nếu có ảnh mới, gọi API để thêm ảnh
+      if (newImages.length > 0) {
+        await dispatch(
+          addImagesProduct({ images: newImages, productId: editingProduct.id })
+        ).unwrap();
+      }
+
       setEditModalOpen(false);
       dispatch(fetchProducts());
+      setNewImages([]); // Reset newImages sau khi đã upload
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
     }
@@ -235,6 +262,19 @@ const ProductManagement = () => {
 
   const handleImageChange = (e) => {
     setProductImages(Array.from(e.target.files));
+  };
+
+  const handleNewImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setNewImages(files);
+
+    // Tạo preview cho ảnh mới
+    const newImagePreviews = files.map(file => ({
+      id: `new-${file.name}`,
+      url: URL.createObjectURL(file)
+    }));
+
+    setProductImages(prevImages => [...prevImages, ...newImagePreviews]);
   };
 
   const resetForm = () => {
@@ -322,18 +362,16 @@ const ProductManagement = () => {
                 onChange={handleImageChange}
               />
             </FormGroup>
-            {productImages.length > 0 && (
-              <div className="image-preview">
-                {productImages.map((image, index) => (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(image)}
-                    alt={`Product img ${index + 1}`}
-                    style={{ width: "100px", margin: "5px" }}
-                  />
-                ))}
+            {productImages.map((image, index) => (
+              <div key={index} className="image-preview-item">
+                <img
+                  src={image.url}
+                  alt={`Product img ${index + 1}`}
+                  style={{ width: "100px", margin: "5px" }}
+                />
+                <button onClick={() => handleImageDelete(image.id)}>Xóa</button>
               </div>
-            )}
+            ))}
             <FormGroup>
               <Label for="productQuantity">Product Quantity</Label>
               <Input
@@ -369,7 +407,7 @@ const ProductManagement = () => {
               <Input
                 id="name"
                 name="name"
-                value={editFormData.name}
+                value={editFormData.productName}
                 onChange={handleEditInputChange}
               />
             </FormGroup>
@@ -412,7 +450,7 @@ const ProductManagement = () => {
                 id="description"
                 name="description"
                 type="textarea"
-                value={editFormData.description}
+                value={editFormData.productDescription}
                 onChange={handleEditInputChange}
               />
             </FormGroup>
@@ -424,6 +462,16 @@ const ProductManagement = () => {
                 type="number"
                 value={editFormData.quantityInStock}
                 onChange={handleEditInputChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="newImages">Thêm ảnh mới</Label>
+              <Input
+                type="file"
+                name="newImages"
+                id="newImages"
+                multiple
+                onChange={handleNewImageChange}
               />
             </FormGroup>
             <FormGroup>

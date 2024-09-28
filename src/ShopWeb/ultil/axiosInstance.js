@@ -7,8 +7,6 @@ const axiosInstance = axios.create({
   headers: {},
 });
 
-console.log(process.env.REACT_APP_API_URL);
-
 // Hàm để lấy giá trị cookie
 function getCookie(name) {
   const value = `; ${document.cookie}`;
@@ -21,7 +19,6 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Thêm token vào header nếu có
     const token = getCookie('accessToken');
-    console.log("Access Token:", token); // Log token lấy được
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
