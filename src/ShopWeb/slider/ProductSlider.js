@@ -35,13 +35,18 @@ export default function ProductSlider() {
   };
 
   const handleAddToCart = (product) => {
-    dispatch(addCart(product));
+    const cartItem = {
+      product: product,
+      quantity: 1,
+    };
+    dispatch(addCart(cartItem));
     Swal.fire({
       title: "Great!",
       text: "Added to cart successfully!",
       icon: "success",
     });
   };
+  
 
   const handleFetchImages = async (productId) => {
     try {

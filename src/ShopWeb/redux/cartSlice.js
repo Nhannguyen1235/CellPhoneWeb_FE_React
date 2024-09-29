@@ -69,20 +69,19 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addCart(state, action) {
-      const product = action.payload;
+      const { product, quantity } = action.payload;
       const existingProduct = state.carts.find(
         (item) => item.id === product.id
       );
       if (existingProduct) {
-        existingProduct.quantity += 1;
+        existingProduct.quantity += quantity;
       } else {
-        state.carts.push({ ...product, checked: true, quantity: 1 });
+        state.carts.push({ ...product, checked: true, quantity: quantity });
       }
     },
     deleteCart(state, action) {
       const productId = action.payload;
       state.carts = state.carts.filter((item) => item.id !== productId);
-      // Xóa hình ảnh của sản phẩm khỏi state
       if (state.productImages[productId]) {
         delete state.productImages[productId];
       }
@@ -113,13 +112,27 @@ const cartSlice = createSlice({
     overwriteCarts(state, action) {
       state.carts = action.payload;
     },
+    changeQuantity(state, action) {
+      const { id, changeQ } = action.payload;
+      const item = state.carts.find(item => item.id === id);
+      if (item) {
+        if (item.quantity === 1 && changeQ < 0) {
+          return;
+        }
+        item.quantity += changeQ;
+        if (item.quantity < 1) {
+          item.quantity = 1;
+        }
+      }
+      localStorage.setItem('carts', JSON.stringify(state.carts)); // Save updated cart to local storage
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchProductImages.fulfilled, (state, action) => {
       const { productId, imageUrls } = action.payload;
       state.productImages[productId] = imageUrls;
     });
-  },
+  },  
 });
 
 export const {
@@ -129,6 +142,7 @@ export const {
   toggleCheckAll,
   toggleCheck,
   overwriteCarts,
+  changeQuantity
 } = cartSlice.actions;
 export default cartSlice.reducer;
 export { saveCartsMiddleware };

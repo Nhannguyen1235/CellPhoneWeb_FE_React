@@ -79,6 +79,11 @@ const voucherSlice = createSlice({
       state.message = "";
       state.error = null;
     },
+    resetVoucher: (state) => {
+      state.vouchers = [];
+      state.status = '';
+      state.message = '';
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -150,5 +155,5 @@ const voucherSlice = createSlice({
   },
 });
 
-export const { resetStatusAndMessage } = voucherSlice.actions;
+export const { resetStatusAndMessage, resetVoucher } = voucherSlice.actions;
 export default voucherSlice.reducer;
