@@ -21,21 +21,9 @@ const SideBar = () => {
           <CDBSidebarMenu>
             <CDBSidebarMenuItem icon="th-large">Dashboard</CDBSidebarMenuItem>
             <CDBSidebarMenuItem as={Link} to="/admin/product" icon="sticky-note">Product Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Account Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem as={Link} to="/admin/category" icon="sticky-note">Category Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Order Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Brand Management</CDBSidebarMenuItem>
             <CDBSidebarMenuItem as={Link} to="/admin/voucher" icon="sticky-note">Voucher Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">Review Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="credit-card" iconType="solid">
-              Metrics
-            </CDBSidebarMenuItem>
             <CDBSidebarMenuItem as={Link} to="/admin/user" icon="sticky-note">User Management</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">test</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">test</CDBSidebarMenuItem>
-            <CDBSidebarMenuItem icon="sticky-note">test</CDBSidebarMenuItem>
           </CDBSidebarMenu>
         </CDBSidebarContent>
 

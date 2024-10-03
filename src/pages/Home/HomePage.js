@@ -257,39 +257,6 @@ export default function HomePage() {
         <h1>New Arrival</h1>
         <ProductSlider />
       </section>
-      <section className="colection text-center">
-        <h1>Colections</h1>
-        <div className="colections row text-center">
-          <div
-            className="men_colection col-lg-4"
-            data-aos="fade-right"
-            data-aos-delay="200"
-          >
-            <div className="box__men_colection p-3">
-              <Link to={"/products/men"}>
-                <img src={SBC_men}></img>
-                <button className="btn-filter btn btn-outline-secondary">
-                  Men's
-                </button>
-              </Link>
-            </div>
-          </div>
-          <div
-            className="women_colection col-lg-4"
-            data-aos="fade-left"
-            data-aos-delay="200"
-          >
-            <div className="box_women_colection p-3">
-              <Link to={"/products/women"}>
-                <img src={SBC_women}></img>
-                <button className="btn-filter btn btn-outline-secondary">
-                  Women's
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
       <section className="brandSlider text-center">
         <h1>Our Brands</h1>
         <BrandSlider />

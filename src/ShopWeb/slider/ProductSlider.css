@@ -46,7 +46,7 @@
     color: #fff;
     border: none;
     padding: 10px;
-    transition: bottom 0.3s ease;
+    transition: bottom 0.5s ease;
   }
   
   .product-card:hover .add-to-cart-btn {

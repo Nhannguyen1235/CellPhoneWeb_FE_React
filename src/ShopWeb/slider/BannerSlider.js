@@ -5,8 +5,9 @@ import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import { nextSlide, prevSlide, setSlide } from '../redux/sliderSlice';
+import Heading from "../../imgs/heading-mo-ban-iphone-16-mobile-update.webp"
 import img_slider from '../../imgs/phono-slider-1.webp';
-import img_slider2 from '../../imgs/phono-slider-2.webp';
+import img_slider2 from '../../imgs/xiaomi-14t-series-mo-ban-gd2-slide.webp';
 import img_slider3 from '../../imgs/phono-slider-3.webp';
 import img_slider4 from '../../imgs/1931319.jpg';
 import './Slider.css';
@@ -47,7 +48,7 @@ export default function Slider() {
             }}
             modules={[Autoplay, Pagination, Navigation]}
           >
-            {[img_slider, img_slider2, img_slider3, img_slider4].map((img, index) => (
+            {[img_slider, Heading, img_slider3, img_slider2].map((img, index) => (
               <SwiperSlide key={index}>
                 <div className="item">
                   <img src={img} alt={`event-${index}`} />

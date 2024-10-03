@@ -398,12 +398,12 @@ const ProductManagement = () => {
 
       <Modal isOpen={editModalOpen} toggle={toggleEdit}>
         <ModalHeader toggle={toggleEdit}>
-          Chỉnh sửa sản phẩm
+         Edit Product
         </ModalHeader>
         <ModalBody>
           <Form onSubmit={handleEditSubmit}>
             <FormGroup>
-              <Label for="name">Tên sản phẩm</Label>
+              <Label for="name">Product Name</Label>
               <Input
                 id="name"
                 name="name"
@@ -412,7 +412,7 @@ const ProductManagement = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="price">Giá</Label>
+              <Label for="price">Price</Label>
               <Input
                 id="price"
                 name="price"
@@ -422,7 +422,7 @@ const ProductManagement = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="categoryId">Danh mục</Label>
+              <Label for="categoryId">Category</Label>
               <Input
                 id="categoryId"
                 name="categoryId"
@@ -430,7 +430,7 @@ const ProductManagement = () => {
                 value={editFormData.categoryId}
                 onChange={handleEditInputChange}
               >
-                <option value="">Chọn danh mục</option>
+                <option value="">Select Category</option>
                 {Array.isArray(categories) && categories.length > 0 ? (
                   categories.map((category) => (
                     <option key={category.id} value={category.id}>
@@ -439,13 +439,13 @@ const ProductManagement = () => {
                   ))
                 ) : (
                   <option value="" disabled>
-                    Không có danh mục
+                    No category
                   </option>
                 )}
               </Input>
             </FormGroup>
             <FormGroup>
-              <Label for="description">Mô tả</Label>
+              <Label for="description">Description</Label>
               <Input
                 id="description"
                 name="description"
@@ -455,7 +455,7 @@ const ProductManagement = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="quantityInStock">Số lượng trong kho</Label>
+              <Label for="quantityInStock">Quantity in stock</Label>
               <Input
                 id="quantityInStock"
                 name="quantityInStock"
@@ -465,7 +465,7 @@ const ProductManagement = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="newImages">Thêm ảnh mới</Label>
+              <Label for="newImages">Add new image</Label>
               <Input
                 type="file"
                 name="newImages"
@@ -475,7 +475,7 @@ const ProductManagement = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label>Ảnh sản phẩm</Label>
+              <Label>Product Image</Label>
               <div className="d-flex flex-wrap">
                 {productImages.map((image) => (
                   <div key={image.id} className="position-relative m-2">
@@ -498,7 +498,7 @@ const ProductManagement = () => {
               </div>
             </FormGroup>
             <Button color="primary" type="submit">
-              Lưu thay đổi
+              Save changes
             </Button>
           </Form>
         </ModalBody>
