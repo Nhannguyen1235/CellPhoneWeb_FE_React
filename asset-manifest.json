@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/CellPhoneWeb_FE_React/static/css/main.60ffecbd.css",
-    "main.js": "/CellPhoneWeb_FE_React/static/js/main.84e77734.js",
+    "main.js": "/CellPhoneWeb_FE_React/static/js/main.8916af00.js",
     "static/media/fa-solid-900.svg": "/CellPhoneWeb_FE_React/static/media/fa-solid-900.7a8b4f130182d19a2d7c.svg",
     "static/media/fa-brands-400.svg": "/CellPhoneWeb_FE_React/static/media/fa-brands-400.2f517e09eb2ca6650ff5.svg",
     "static/media/1931319.jpg": "/CellPhoneWeb_FE_React/static/media/1931319.ddebd7b3e737be450c65.jpg",
@@ -43,10 +43,10 @@
     "static/media/offers-icon.webp": "/CellPhoneWeb_FE_React/static/media/offers-icon.603c528e04301c910df2.webp",
     "index.html": "/CellPhoneWeb_FE_React/index.html",
     "main.60ffecbd.css.map": "/CellPhoneWeb_FE_React/static/css/main.60ffecbd.css.map",
-    "main.84e77734.js.map": "/CellPhoneWeb_FE_React/static/js/main.84e77734.js.map"
+    "main.8916af00.js.map": "/CellPhoneWeb_FE_React/static/js/main.8916af00.js.map"
   },
   "entrypoints": [
     "static/css/main.60ffecbd.css",
-    "static/js/main.84e77734.js"
+    "static/js/main.8916af00.js"
   ]
 }
