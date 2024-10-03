@@ -1,5 +1,5 @@
 {
-  "name": "myproject",
+  "name": "cellphoneweb-fe-react",
   "version": "0.1.0",
   "private": true,
   "homepage": "https://nhannguyen1235.github.io/CellPhoneWeb_FE_React",
@@ -16,6 +16,7 @@
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
     "cdbreact": "^1.5.19",
+    "cellphoneweb-fe-react": "file:",
     "dotenv": "^16.4.5",
     "emailjs-com": "^3.2.0",
     "gh-pages": "^6.1.1",
