@@ -59,7 +59,7 @@ export default function Header() {
                 <NavLink
                   className="nav-link-custom"
                   color="black"
-                  href="/myproject/#/"
+                  href="/CellPhoneWeb_FE_React/#/"
                 >
                   Home
                 </NavLink>
@@ -67,7 +67,7 @@ export default function Header() {
               <NavItem>
                 <NavLink
                   className="nav-link-custom"
-                  href="/myproject/#/products"
+                  href="/CellPhoneWeb_FE_React/#/products"
                 >
                   Products
                 </NavLink>
@@ -75,13 +75,13 @@ export default function Header() {
               <NavItem>
                 <NavLink
                   className="nav-link-custom"
-                  href="/myproject/#/contact"
+                  href="/CellPhoneWeb_FE_React/#/contact"
                 >
                   Contact
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className="nav-link-custom" href="/myproject/#/login">
+                <NavLink className="nav-link-custom" href="/CellPhoneWeb_FE_React/#/login">
                   Login
                 </NavLink>
               </NavItem>
@@ -101,7 +101,7 @@ export default function Header() {
                 </InputGroup>
               </NavItem>
               <NavItem>
-                <NavLink className="cart fs-3" href="/myproject/#/cart">
+                <NavLink className="cart fs-3" href="/CellPhoneWeb_FE_React/#/cart">
                   <BsCart />
                   <div className="cartQuantity text-center">
                     <p className="number">{cartCount}</p>
@@ -109,7 +109,7 @@ export default function Header() {
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className="user fs-3" href="/myproject/#/login">
+                <NavLink className="user fs-3" href="/CellPhoneWeb_FE_React/#/login">
                   <CiUser />
                 </NavLink>
               </NavItem>
